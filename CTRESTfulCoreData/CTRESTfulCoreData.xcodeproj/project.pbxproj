@@ -26,6 +26,8 @@
 		A78538AB14FB778600D29EB0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A78538A914FB778600D29EB0 /* InfoPlist.strings */; };
 		A78538AE14FB778600D29EB0 /* CTRESTfulCoreDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A78538AD14FB778600D29EB0 /* CTRESTfulCoreDataTests.m */; };
 		A78538B814FB77F800D29EB0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A78538B714FB77F700D29EB0 /* CoreData.framework */; };
+		A79224C914FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A79224C714FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h */; };
+		A79224CA14FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A79224C814FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m */; };
 		A7C578C814FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */; };
 		A7C578C914FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */; };
 		A7C578CA14FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */; };
@@ -49,7 +51,7 @@
 
 /* Begin PBXFileReference section */
 		A727281014FCCAD0007C4D96 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		A727281214FCCADE007C4D96 /* TTEntity1.h */ = {isa = PBXFileReference; fileEncoding = 4; path = TTEntity1.h; sourceTree = "<group>"; };
+		A727281214FCCADE007C4D96 /* TTEntity1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTEntity1.h; sourceTree = "<group>"; };
 		A727281314FCCADE007C4D96 /* TTEntity1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTEntity1.m; sourceTree = "<group>"; };
 		A727281514FCCAED007C4D96 /* Entity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity2.h; sourceTree = "<group>"; };
 		A727281614FCCAED007C4D96 /* Entity2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Entity2.m; sourceTree = "<group>"; };
@@ -72,6 +74,8 @@
 		A78538AC14FB778600D29EB0 /* CTRESTfulCoreDataTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTRESTfulCoreDataTests.h; sourceTree = "<group>"; };
 		A78538AD14FB778600D29EB0 /* CTRESTfulCoreDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CTRESTfulCoreDataTests.m; sourceTree = "<group>"; };
 		A78538B714FB77F700D29EB0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		A79224C714FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
+		A79224C814FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
 		A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
 		A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
 		A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
@@ -213,6 +217,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		A79224C514FCFFC600449314 /* NSURL */ = {
+			isa = PBXGroup;
+			children = (
+				A79224C714FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h */,
+				A79224C814FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m */,
+			);
+			path = NSURL;
+			sourceTree = "<group>";
+		};
 		A7C578BC14FB85C8000391F9 /* Framework Additions */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +258,7 @@
 				A7C578C214FB85C8000391F9 /* NSDate */,
 				A75E5BDD14FCFACA00E1F2E3 /* NSObject */,
 				A7C578C514FB85C8000391F9 /* NSString */,
+				A79224C514FCFFC600449314 /* NSURL */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -289,6 +303,7 @@
 				A7C57A0F14FC1A36000391F9 /* CTManagedObjectMappingModel.h in Headers */,
 				A727281C14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h in Headers */,
 				A75E5BE114FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.h in Headers */,
+				A79224C914FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +415,7 @@
 				A7C57A1014FC1A36000391F9 /* CTManagedObjectMappingModel.m in Sources */,
 				A727281D14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m in Sources */,
 				A75E5BE214FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.m in Sources */,
+				A79224CA14FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

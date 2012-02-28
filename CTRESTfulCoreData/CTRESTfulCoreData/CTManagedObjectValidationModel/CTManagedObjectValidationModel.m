@@ -19,6 +19,7 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
 
 - (BOOL)_isObject:(id)object validForManagedObjectAttribute:(NSString *)managedObjectAttributeName;
 - (id)_convertObject:(id)object forManagedObjectAttribute:(NSString *)managedObjectAttributeName;
+- (id)_reverseConvertObject:(id)object forManagedObjectAttribute:(NSString *)managedObjectAttributeName;
 
 @end
 
@@ -71,6 +72,13 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
     return nil;
 }
 
+- (id)JSONObjectObjectFromManagedObjectObject:(id)managedObjectObject
+                    forManagedObjectAttribute:(NSString *)managedObjectAttributeName
+{
+    return [self _reverseConvertObject:managedObjectObject
+             forManagedObjectAttribute:managedObjectAttributeName];
+}
+
 #pragma mark - private category implementation ()
 
 - (BOOL)_isObject:(id)object validForManagedObjectAttribute:(NSString *)managedObjectAttributeName
@@ -101,6 +109,24 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
         NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:valueTransformerName];
         
         return [valueTransformer transformedValue:object];
+    }
+    
+    return nil;
+}
+
+- (id)_reverseConvertObject:(id)object forManagedObjectAttribute:(NSString *)managedObjectAttributeName
+{
+    NSAttributeType attributeType = [[_attributTypesValidationDictionary objectForKey:managedObjectAttributeName] unsignedIntegerValue];
+    
+    if (NSAttributeTypeIsNSNumber(attributeType) || attributeType == NSStringAttributeType) {
+        return object;
+    } else if (attributeType == NSDateAttributeType) {
+        return [(NSDate *)object CTRESTfulCoreDataDateRepresentation];
+    } else if (attributeType == NSTransformableAttributeType) {
+        NSString *valueTransformerName = [_valueTransformerNamesDictionary objectForKey:managedObjectAttributeName];
+        NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:valueTransformerName];
+        
+        return [valueTransformer reverseTransformedValue:object];
     }
     
     return nil;

@@ -9,6 +9,7 @@
 #import "NSDate+CTRESTfulCoreData.h"
 #import "NSObject+CTRESTfulCoreData.h"
 #import "NSString+CTRESTfulCoreData.h"
+#import "NSURL+CTRESTfulCoreData.h"
 
 #import "NSManagedObject+CTRESTfulCoreData.h"
 #import "CTManagedObjectMappingModel.h"

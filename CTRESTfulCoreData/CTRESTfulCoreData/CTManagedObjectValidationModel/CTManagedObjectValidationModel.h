@@ -27,4 +27,7 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType);
 - (id)managedObjectObjectFromJSONObjectObject:(id)JSONObjectObject
                     forManagedObjectAttribute:(NSString *)managedObjectAttributeName;
 
+- (id)JSONObjectObjectFromManagedObjectObject:(id)managedObjectObject
+                    forManagedObjectAttribute:(NSString *)managedObjectAttributeName;
+
 @end

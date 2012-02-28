@@ -136,6 +136,33 @@
     STAssertNil(entity, @"JSON object without id should not create a CoreData object: %@", entity);
 }
 
+- (void)testURLSubstitution
+{
+    NSURL *URL = [[NSBundle bundleForClass:self.class] URLForResource:@"APISampleEntity" withExtension:@"json"];
+    NSDictionary *JSONDictionary = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfURL:URL]
+                                                                   options:0
+                                                                     error:NULL];
+    
+    // update one entity with id 5
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
+                                               inManagedObjectContext:_managedObjectContext];
+    
+    URL = [NSURL URLWithString:@"http://0.0.0.0:3000/api/root/:id/bla"];
+    URL = [URL URLBySubstitutingAttributesWithManagedObject:entity];
+    NSURL *expectedURL = [NSURL URLWithString:@"http://0.0.0.0:3000/api/root/5/bla"];
+    STAssertEqualObjects(URL, expectedURL, @":id substitution not working");
+    
+    URL = [NSURL URLWithString:@"http://0.0.0.0:3000/api/root/:id/:some_string"];
+    URL = [URL URLBySubstitutingAttributesWithManagedObject:entity];
+    expectedURL = [NSURL URLWithString:@"http://0.0.0.0:3000/api/root/5/String"];
+    STAssertEqualObjects(URL, expectedURL, @":id and :some_string substitution not working");
+    
+    URL = [NSURL URLWithString:@"http://0.0.0.0:3000/api/dashboard_content_containers/:id/workflows?updated_at=:some_date"];
+    URL = [URL URLBySubstitutingAttributesWithManagedObject:entity];
+    expectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://0.0.0.0:3000/api/dashboard_content_containers/5/workflows?updated_at=%@", entity.someDate.CTRESTfulCoreDataDateRepresentation]];
+    STAssertEqualObjects(URL, expectedURL, @":some_date substitution not working");
+}
+
 #pragma mark - CoreData
 
 - (NSString *)managedObjectModelName
