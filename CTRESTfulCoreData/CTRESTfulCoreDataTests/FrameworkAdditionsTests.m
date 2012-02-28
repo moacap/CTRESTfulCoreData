@@ -8,7 +8,7 @@
 
 #import "FrameworkAdditionsTests.h"
 #import "CTRESTfulCoreData.h"
-//#import "SampleEntity.h"
+#import "TTEntity1.h"
 
 @implementation CTCoreDataAPIFrameworkAdditionsTests
 
@@ -37,8 +37,17 @@
 {
     NSString *string = @"thisIsATest";
     NSString *expectedResult = @"this_is_a_test";
-    
     STAssertEqualObjects(string.stringByUnderscoringString, expectedResult, @"underscoring not working.");
+    
+    string = @"GHAPIV3Repository";
+    expectedResult = @"ghapiv3_repository";
+    STAssertEqualObjects(string.stringByUnderscoringString, expectedResult, @"underscoring not working.");
+}
+
+- (void)testClassPrefix
+{
+    NSString *prefix = [TTEntity1 classPrefix];
+    STAssertEqualObjects(prefix, @"TT", @"Prefix extraction not working");
 }
 
 @end
