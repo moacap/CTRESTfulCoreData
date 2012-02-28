@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 ebf. All rights reserved.
 //
 
-#import "Entity1.h"
+#import "TTEntity1.h"
 #import "CTRESTfulCoreData.h"
 
 
-@implementation Entity1
+@implementation TTEntity1
 
 @dynamic id;
 @dynamic someDate;

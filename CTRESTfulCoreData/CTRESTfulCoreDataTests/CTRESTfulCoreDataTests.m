@@ -8,7 +8,7 @@
 
 #import "CTRESTfulCoreDataTests.h"
 #import "CTRESTfulCoreData.h"
-#import "Entity1.h"
+#import "TTEntity1.h"
 #import "Entity2.h"
 
 @implementation CTRESTfulCoreDataTests
@@ -33,7 +33,7 @@
 
 - (void)testDifferentMappingModels
 {
-    CTManagedObjectMappingModel *model1 = Entity1.mappingModel;
+    CTManagedObjectMappingModel *model1 = TTEntity1.mappingModel;
     CTManagedObjectMappingModel *model2 = Entity2.mappingModel;
     
     STAssertNotNil(model1, @"+[NSManagedObject mappingModel] cannot return nil");
@@ -41,12 +41,12 @@
     
     STAssertTrue(model1 != model2, @"Different entities cannot return the same CTManagedObjectMappingModel");
     
-    STAssertEquals(model1, Entity1.mappingModel, @"+[NSManagedObject mappingModel] cannot return different models for the same class.");
+    STAssertEquals(model1, TTEntity1.mappingModel, @"+[NSManagedObject mappingModel] cannot return different models for the same class.");
 }
 
 - (void)testMappingModelKeyConversion
 {
-    CTManagedObjectMappingModel *model = Entity1.mappingModel;
+    CTManagedObjectMappingModel *model = TTEntity1.mappingModel;
     
     NSString *key = [model keyForJSONObjectFromManagedObjectAttribute:@"someStrangeString"];
     NSString *expectedKey = @"some_super_strange_string";
@@ -69,7 +69,7 @@
 
 - (void)testAttributeNames
 {
-    NSArray *attributeNames = [Entity1 attributeNamesInManagedObjectContext:_managedObjectContext];
+    NSArray *attributeNames = [TTEntity1 attributeNamesInManagedObjectContext:_managedObjectContext];
     NSArray *expectedAttributes = [NSArray arrayWithObjects:@"id", @"someDate", @"someNumber", @"someStrangeString", @"someString", nil];
     
     STAssertEqualObjects(attributeNames, expectedAttributes, @"+[NSManagedObject attributeNamesInManagedObjectContext] not returning correct attribute names");
@@ -83,8 +83,8 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    Entity1 *entity = [Entity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                           inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
+                                               inManagedObjectContext:_managedObjectContext];
     
     STAssertEqualObjects(entity.id, [NSNumber numberWithInt:5], @"id not correct (%@)", entity);
     STAssertEqualObjects(entity.someString, @"String", @"someString not correct (%@)", entity);
@@ -93,8 +93,8 @@
     STAssertEqualObjects(entity.someDate, @"2012-02-24T08:22:43Z".CTRESTfulCoreDataDateRepresentation, @"someDate not correct (%@)", entity);
     
     // now update the same entity with myID 5 => only one object should exist in the database
-    entity = [Entity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                  inManagedObjectContext:_managedObjectContext];
+    entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
+                                    inManagedObjectContext:_managedObjectContext];
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass(entity.class)];
     request.predicate = [NSPredicate predicateWithFormat:@"id == %@", [NSNumber numberWithInt:5]];
@@ -115,8 +115,8 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    Entity1 *entity = [Entity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                           inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
+                                               inManagedObjectContext:_managedObjectContext];
     
     STAssertNil(entity.someString, @"some_string is badly formatted => entity.someString should not be set (%@)", entity);
     STAssertNil(entity.someDate, @"some_date is badly formatted => entity.someDate should not be set (%@)", entity.someDate);
@@ -130,8 +130,8 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    Entity1 *entity = [Entity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                           inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
+                                               inManagedObjectContext:_managedObjectContext];
     
     STAssertNil(entity, @"JSON object without id should not create a CoreData object: %@", entity);
 }

@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 
 
-@interface Entity1 : NSManagedObject
+@interface TTEntity1 : NSManagedObject
 
 @property (nonatomic, retain) NSNumber *id;
 @property (nonatomic, retain) NSDate   *someDate;
