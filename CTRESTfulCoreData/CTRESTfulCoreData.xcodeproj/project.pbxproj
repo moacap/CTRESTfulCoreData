@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A727281114FCCAD0007C4D96 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A727280F14FCCAD0007C4D96 /* Model.xcdatamodeld */; };
+		A727281414FCCADE007C4D96 /* Entity1.m in Sources */ = {isa = PBXBuildFile; fileRef = A727281314FCCADE007C4D96 /* Entity1.m */; };
+		A727281714FCCAED007C4D96 /* Entity2.m in Sources */ = {isa = PBXBuildFile; fileRef = A727281614FCCAED007C4D96 /* Entity2.m */; };
+		A727281814FCCCFB007C4D96 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A78538B714FB77F700D29EB0 /* CoreData.framework */; };
+		A727281C14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h in Headers */ = {isa = PBXBuildFile; fileRef = A727281A14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h */; };
+		A727281D14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A727281B14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m */; };
+		A727281F14FCDCB7007C4D96 /* APISampleEntity.json in Resources */ = {isa = PBXBuildFile; fileRef = A727281E14FCDC78007C4D96 /* APISampleEntity.json */; };
+		A727285914FCE4DA007C4D96 /* BADAPISampleEntity.json in Resources */ = {isa = PBXBuildFile; fileRef = A727285814FCE4DA007C4D96 /* BADAPISampleEntity.json */; };
+		A727285B14FCE551007C4D96 /* SampleEntityWithoutID.json in Resources */ = {isa = PBXBuildFile; fileRef = A727285A14FCE551007C4D96 /* SampleEntityWithoutID.json */; };
 		A785389114FB778600D29EB0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A785389014FB778600D29EB0 /* Foundation.framework */; };
 		A785389714FB778600D29EB0 /* CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A785389614FB778600D29EB0 /* CTRESTfulCoreData.m */; };
 		A785389F14FB778600D29EB0 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A785389E14FB778600D29EB0 /* SenTestingKit.framework */; };
@@ -15,6 +24,15 @@
 		A78538AB14FB778600D29EB0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A78538A914FB778600D29EB0 /* InfoPlist.strings */; };
 		A78538AE14FB778600D29EB0 /* CTRESTfulCoreDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A78538AD14FB778600D29EB0 /* CTRESTfulCoreDataTests.m */; };
 		A78538B814FB77F800D29EB0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A78538B714FB77F700D29EB0 /* CoreData.framework */; };
+		A7C578C814FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */; };
+		A7C578C914FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */; };
+		A7C578CA14FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */; };
+		A7C578CB14FB85C8000391F9 /* NSDate+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C578C414FB85C8000391F9 /* NSDate+CTRESTfulCoreData.m */; };
+		A7C578CC14FB85C8000391F9 /* NSString+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578C614FB85C8000391F9 /* NSString+CTRESTfulCoreData.h */; };
+		A7C578CD14FB85C8000391F9 /* NSString+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C578C714FB85C8000391F9 /* NSString+CTRESTfulCoreData.m */; };
+		A7C578D014FB884B000391F9 /* FrameworkAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C578CF14FB884B000391F9 /* FrameworkAdditionsTests.m */; };
+		A7C57A0F14FC1A36000391F9 /* CTManagedObjectMappingModel.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C57A0D14FC1A36000391F9 /* CTManagedObjectMappingModel.h */; };
+		A7C57A1014FC1A36000391F9 /* CTManagedObjectMappingModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C57A0E14FC1A36000391F9 /* CTManagedObjectMappingModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,6 +46,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A727281014FCCAD0007C4D96 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		A727281214FCCADE007C4D96 /* Entity1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity1.h; sourceTree = "<group>"; };
+		A727281314FCCADE007C4D96 /* Entity1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Entity1.m; sourceTree = "<group>"; };
+		A727281514FCCAED007C4D96 /* Entity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity2.h; sourceTree = "<group>"; };
+		A727281614FCCAED007C4D96 /* Entity2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Entity2.m; sourceTree = "<group>"; };
+		A727281A14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTManagedObjectValidationModel.h; sourceTree = "<group>"; };
+		A727281B14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTManagedObjectValidationModel.m; sourceTree = "<group>"; };
+		A727281E14FCDC78007C4D96 /* APISampleEntity.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = APISampleEntity.json; sourceTree = "<group>"; };
+		A727285814FCE4DA007C4D96 /* BADAPISampleEntity.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = BADAPISampleEntity.json; sourceTree = "<group>"; };
+		A727285A14FCE551007C4D96 /* SampleEntityWithoutID.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SampleEntityWithoutID.json; sourceTree = "<group>"; };
 		A785388D14FB778600D29EB0 /* libCTRESTfulCoreData.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCTRESTfulCoreData.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A785389014FB778600D29EB0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A785389414FB778600D29EB0 /* CTRESTfulCoreData-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CTRESTfulCoreData-Prefix.pch"; sourceTree = "<group>"; };
@@ -40,6 +68,16 @@
 		A78538AC14FB778600D29EB0 /* CTRESTfulCoreDataTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CTRESTfulCoreDataTests.h; sourceTree = "<group>"; };
 		A78538AD14FB778600D29EB0 /* CTRESTfulCoreDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CTRESTfulCoreDataTests.m; sourceTree = "<group>"; };
 		A78538B714FB77F700D29EB0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
+		A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
+		A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
+		A7C578C414FB85C8000391F9 /* NSDate+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
+		A7C578C614FB85C8000391F9 /* NSString+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
+		A7C578C714FB85C8000391F9 /* NSString+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
+		A7C578CE14FB884B000391F9 /* FrameworkAdditionsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameworkAdditionsTests.h; sourceTree = "<group>"; };
+		A7C578CF14FB884B000391F9 /* FrameworkAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameworkAdditionsTests.m; sourceTree = "<group>"; };
+		A7C57A0D14FC1A36000391F9 /* CTManagedObjectMappingModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTManagedObjectMappingModel.h; sourceTree = "<group>"; };
+		A7C57A0E14FC1A36000391F9 /* CTManagedObjectMappingModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTManagedObjectMappingModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A727281814FCCCFB007C4D96 /* CoreData.framework in Frameworks */,
 				A785389F14FB778600D29EB0 /* SenTestingKit.framework in Frameworks */,
 				A78538A214FB778600D29EB0 /* Foundation.framework in Frameworks */,
 				A78538A514FB778600D29EB0 /* libCTRESTfulCoreData.a in Frameworks */,
@@ -65,6 +104,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A727280E14FCCAD0007C4D96 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A727280F14FCCAD0007C4D96 /* Model.xcdatamodeld */,
+				A727281214FCCADE007C4D96 /* Entity1.h */,
+				A727281314FCCADE007C4D96 /* Entity1.m */,
+				A727281514FCCAED007C4D96 /* Entity2.h */,
+				A727281614FCCAED007C4D96 /* Entity2.m */,
+				A727281E14FCDC78007C4D96 /* APISampleEntity.json */,
+				A727285814FCE4DA007C4D96 /* BADAPISampleEntity.json */,
+				A727285A14FCE551007C4D96 /* SampleEntityWithoutID.json */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		A727281914FCD2A3007C4D96 /* CTManagedObjectValidationModel */ = {
+			isa = PBXGroup;
+			children = (
+				A727281A14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h */,
+				A727281B14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m */,
+			);
+			path = CTManagedObjectValidationModel;
+			sourceTree = "<group>";
+		};
 		A785388214FB778600D29EB0 = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +160,9 @@
 		A785389214FB778600D29EB0 /* CTRESTfulCoreData */ = {
 			isa = PBXGroup;
 			children = (
+				A727281914FCD2A3007C4D96 /* CTManagedObjectValidationModel */,
+				A7C57A0B14FC144A000391F9 /* CTManagedObjectMappingModel */,
+				A7C578BC14FB85C8000391F9 /* Framework Additions */,
 				A785389514FB778600D29EB0 /* CTRESTfulCoreData.h */,
 				A785389614FB778600D29EB0 /* CTRESTfulCoreData.m */,
 				A785389314FB778600D29EB0 /* Supporting Files */,
@@ -115,6 +181,9 @@
 		A78538A614FB778600D29EB0 /* CTRESTfulCoreDataTests */ = {
 			isa = PBXGroup;
 			children = (
+				A727280E14FCCAD0007C4D96 /* Model */,
+				A7C578CE14FB884B000391F9 /* FrameworkAdditionsTests.h */,
+				A7C578CF14FB884B000391F9 /* FrameworkAdditionsTests.m */,
 				A78538AC14FB778600D29EB0 /* CTRESTfulCoreDataTests.h */,
 				A78538AD14FB778600D29EB0 /* CTRESTfulCoreDataTests.m */,
 				A78538A714FB778600D29EB0 /* Supporting Files */,
@@ -131,6 +200,68 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		A7C578BC14FB85C8000391F9 /* Framework Additions */ = {
+			isa = PBXGroup;
+			children = (
+				A7C578BD14FB85C8000391F9 /* CoreData */,
+				A7C578C114FB85C8000391F9 /* Foundation */,
+			);
+			path = "Framework Additions";
+			sourceTree = "<group>";
+		};
+		A7C578BD14FB85C8000391F9 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				A7C578BE14FB85C8000391F9 /* NSManagedObject */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		A7C578BE14FB85C8000391F9 /* NSManagedObject */ = {
+			isa = PBXGroup;
+			children = (
+				A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */,
+				A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */,
+			);
+			path = NSManagedObject;
+			sourceTree = "<group>";
+		};
+		A7C578C114FB85C8000391F9 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				A7C578C214FB85C8000391F9 /* NSDate */,
+				A7C578C514FB85C8000391F9 /* NSString */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		A7C578C214FB85C8000391F9 /* NSDate */ = {
+			isa = PBXGroup;
+			children = (
+				A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */,
+				A7C578C414FB85C8000391F9 /* NSDate+CTRESTfulCoreData.m */,
+			);
+			path = NSDate;
+			sourceTree = "<group>";
+		};
+		A7C578C514FB85C8000391F9 /* NSString */ = {
+			isa = PBXGroup;
+			children = (
+				A7C578C614FB85C8000391F9 /* NSString+CTRESTfulCoreData.h */,
+				A7C578C714FB85C8000391F9 /* NSString+CTRESTfulCoreData.m */,
+			);
+			path = NSString;
+			sourceTree = "<group>";
+		};
+		A7C57A0B14FC144A000391F9 /* CTManagedObjectMappingModel */ = {
+			isa = PBXGroup;
+			children = (
+				A7C57A0D14FC1A36000391F9 /* CTManagedObjectMappingModel.h */,
+				A7C57A0E14FC1A36000391F9 /* CTManagedObjectMappingModel.m */,
+			);
+			path = CTManagedObjectMappingModel;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -138,6 +269,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A7C578C814FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h in Headers */,
+				A7C578CA14FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h in Headers */,
+				A7C578CC14FB85C8000391F9 /* NSString+CTRESTfulCoreData.h in Headers */,
+				A7C57A0F14FC1A36000391F9 /* CTManagedObjectMappingModel.h in Headers */,
+				A727281C14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,7 +348,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A727281F14FCDCB7007C4D96 /* APISampleEntity.json in Resources */,
 				A78538AB14FB778600D29EB0 /* InfoPlist.strings in Resources */,
+				A727285914FCE4DA007C4D96 /* BADAPISampleEntity.json in Resources */,
+				A727285B14FCE551007C4D96 /* SampleEntityWithoutID.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +379,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A785389714FB778600D29EB0 /* CTRESTfulCoreData.m in Sources */,
+				A7C578C914FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m in Sources */,
+				A7C578CB14FB85C8000391F9 /* NSDate+CTRESTfulCoreData.m in Sources */,
+				A7C578CD14FB85C8000391F9 /* NSString+CTRESTfulCoreData.m in Sources */,
+				A7C57A1014FC1A36000391F9 /* CTManagedObjectMappingModel.m in Sources */,
+				A727281D14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +392,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				A78538AE14FB778600D29EB0 /* CTRESTfulCoreDataTests.m in Sources */,
+				A7C578D014FB884B000391F9 /* FrameworkAdditionsTests.m in Sources */,
+				A727281114FCCAD0007C4D96 /* Model.xcdatamodeld in Sources */,
+				A727281414FCCADE007C4D96 /* Entity1.m in Sources */,
+				A727281714FCCAED007C4D96 /* Entity2.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +441,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-Objc",
+				);
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -310,6 +462,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-Objc",
+				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -388,6 +544,7 @@
 				A78538B314FB778600D29EB0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A78538B414FB778600D29EB0 /* Build configuration list for PBXNativeTarget "CTRESTfulCoreDataTests" */ = {
 			isa = XCConfigurationList;
@@ -396,8 +553,22 @@
 				A78538B614FB778600D29EB0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		A727280F14FCCAD0007C4D96 /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A727281014FCCAD0007C4D96 /* Model.xcdatamodel */,
+			);
+			currentVersion = A727281014FCCAD0007C4D96 /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = A785388414FB778600D29EB0 /* Project object */;
 }
