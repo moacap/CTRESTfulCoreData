@@ -7,6 +7,7 @@
 //
 
 #import "NSDate+CTRESTfulCoreData.h"
+#import "NSObject+CTRESTfulCoreData.h"
 #import "NSString+CTRESTfulCoreData.h"
 
 #import "NSManagedObject+CTRESTfulCoreData.h"
