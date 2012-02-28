@@ -50,4 +50,23 @@ extern NSString *const CTRESTfulCoreDataValidationModelKey;
  */
 - (void)updateWithRawJSONDictionary:(NSDictionary *)dictionary;
 
+/**
+ Fetches an array of objects for this class and stores it in core data.
+ */
++ (void)fetchObjectsFromURL:(NSURL *)URL
+          completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
+/**
+ Fetches objects from a URL for a given relationship.
+ 
+ URL support substitution of object specific attributes:
+ http://0.0.0.0:3000/api/object/:some_id/relationship
+ where :some_id will be substituted with the content of the attribute from this self with someID or whatever mapping was specified.
+ 
+ Supported relationships are 1-to-many and 1-to-1.
+ */
+- (void)fetchObjectsForRelationship:(NSString *)relationship
+                            fromURL:(NSURL *)URL
+                  completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
 @end

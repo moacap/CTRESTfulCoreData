@@ -120,4 +120,17 @@ NSString *const CTRESTfulCoreDataValidationModelKey = @"CTRESTfulCoreDataValidat
     }
 }
 
++ (void)fetchObjectsFromURL:(NSURL *)URL
+          completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler
+{
+    
+}
+
+- (void)fetchObjectsForRelationship:(NSString *)relationship
+                            fromURL:(NSURL *)URL
+                  completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler
+{
+    
+}
+
 @end
