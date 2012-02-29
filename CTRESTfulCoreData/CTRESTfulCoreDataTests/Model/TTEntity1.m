@@ -9,6 +9,9 @@
 #import "TTEntity1.h"
 #import "CTRESTfulCoreData.h"
 
+NSManagedObjectContext *testContext;
+
+
 
 @implementation TTEntity1
 
@@ -20,8 +23,12 @@
 
 + (void)initialize
 {
-    [self registerAttributeName:@"someStrangeString"
-           forJSONObjectKeyPath:@"some_super_strange_string"];
+    [self registerAttributeName:@"someStrangeString" forJSONObjectKeyPath:@"some_super_strange_string"];
+}
+
++ (NSManagedObjectContext *)managedObjectContext
+{
+    return testContext;
 }
 
 @end

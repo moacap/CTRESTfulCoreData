@@ -16,8 +16,9 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 @implementation NSManagedObject (CTRESTfulCoreData)
 
-+ (NSArray *)attributeNamesInManagedObjectContext:(NSManagedObjectContext *)context
++ (NSArray *)attributeNames
 {
+    NSManagedObjectContext *context = self.managedObjectContext;
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self)
                                                          inManagedObjectContext:context];
     
@@ -25,11 +26,17 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 }
 
 + (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName
-                                                  inContext:(NSManagedObjectContext *)context
 {
+    NSManagedObjectContext *context = self.managedObjectContext;
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self)
                                                          inManagedObjectContext:context];
     return [entityDescription.relationshipsByName objectForKey:relationshipName];
+}
+
++ (NSManagedObjectContext *)managedObjectContext
+{
+    [NSException raise:NSInternalInconsistencyException format:@"%@ does not recognize selector %@", self, NSStringFromSelector(_cmd)];
+    return nil;
 }
 
 + (id<CTRESTfulCoreDataBackgroundQueue>)backgroundQueue
@@ -81,9 +88,8 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 }
 
 + (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)rawDictionary
-                  inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    NSAssert(context != nil, @"No context specified");
+    NSManagedObjectContext *context = self.managedObjectContext;
     
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
     CTManagedObjectValidationModel *validationModel = [self validationModelForManagedObjectContext:context];
@@ -129,7 +135,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 - (void)updateWithRawJSONDictionary:(NSDictionary *)rawDictionary
 {
-    NSArray *attributes = [self.class attributeNamesInManagedObjectContext:self.managedObjectContext];
+    NSArray *attributes = [self.class attributeNames];
     CTManagedObjectValidationModel *validationModel = [self.class validationModelForManagedObjectContext:self.managedObjectContext];
     CTManagedObjectMappingModel *mappingModel = self.class.mappingModel;
     
@@ -147,7 +153,6 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 }
 
 + (void)fetchObjectsFromURL:(NSURL *)URL
-     inManagedObjectContext:(NSManagedObjectContext *)context
           completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler
 {
     // send request to given URL
@@ -171,8 +176,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                      return;
                  }
                  
-                 id object = [self updatedObjectWithRawJSONDictionary:rawDictionary
-                                               inManagedObjectContext:context];
+                 id object = [self updatedObjectWithRawJSONDictionary:rawDictionary];
                  if (object) {
                      [updatedObjects addObject:object];
                  } else {
@@ -201,8 +205,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
              // success for now
              
              // get relationship description, name of destination entity and the name of the invers relation.
-             NSRelationshipDescription *relationshipDescription = [self.class relationshipDescriptionNamed:relationship
-                                                                                                 inContext:self.managedObjectContext];
+             NSRelationshipDescription *relationshipDescription = [self.class relationshipDescriptionNamed:relationship];
              NSAssert(relationshipDescription != nil, @"There is no relationship %@ for %@", relationship, self.class);
              
              NSString *destinationClassName = relationshipDescription.destinationEntity.managedObjectClassName;
@@ -230,8 +233,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                          return;
                      }
                      
-                     id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary
-                                                                                      inManagedObjectContext:self.managedObjectContext];
+                     id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary];
                      [object setValue:self forKey:inverseRelationshipName];
                      
                      if (object) {
@@ -251,8 +253,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                  }
                  
                  // update destination entity with JSON object.
-                 id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject
-                                                                                  inManagedObjectContext:self.managedObjectContext];
+                 id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject];
                  [self setValue:object forKey:relationship];
                  
                  if (object) {

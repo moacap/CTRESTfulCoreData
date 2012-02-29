@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+extern NSManagedObjectContext *testContext;
 
 @interface TTEntity1 : NSManagedObject
 

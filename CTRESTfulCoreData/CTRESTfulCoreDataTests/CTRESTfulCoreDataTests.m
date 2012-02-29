@@ -17,7 +17,7 @@
 {
     [super setUp];
     
-    [self managedObjectContext];
+    testContext = [self managedObjectContext];
 }
 
 - (void)tearDown
@@ -25,6 +25,8 @@
     _managedObjectModel = nil;
     _managedObjectContext = nil;
     _persistentStoreCoordinator = nil;
+    
+    testContext = nil;
     
     [super tearDown];
 }
@@ -69,7 +71,7 @@
 
 - (void)testAttributeNames
 {
-    NSArray *attributeNames = [TTEntity1 attributeNamesInManagedObjectContext:_managedObjectContext];
+    NSArray *attributeNames = [TTEntity1 attributeNames];
     NSArray *expectedAttributes = [NSArray arrayWithObjects:@"id", @"someDate", @"someNumber", @"someStrangeString", @"someString", nil];
     
     STAssertEqualObjects(attributeNames, expectedAttributes, @"+[NSManagedObject attributeNamesInManagedObjectContext] not returning correct attribute names");
@@ -83,8 +85,7 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                               inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary];
     
     STAssertEqualObjects(entity.id, [NSNumber numberWithInt:5], @"id not correct (%@)", entity);
     STAssertEqualObjects(entity.someString, @"String", @"someString not correct (%@)", entity);
@@ -93,8 +94,7 @@
     STAssertEqualObjects(entity.someDate, @"2012-02-24T08:22:43Z".CTRESTfulCoreDataDateRepresentation, @"someDate not correct (%@)", entity);
     
     // now update the same entity with myID 5 => only one object should exist in the database
-    entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                    inManagedObjectContext:_managedObjectContext];
+    entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary];
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass(entity.class)];
     request.predicate = [NSPredicate predicateWithFormat:@"id == %@", [NSNumber numberWithInt:5]];
@@ -115,8 +115,7 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                               inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary];
     
     STAssertNil(entity.someString, @"some_string is badly formatted => entity.someString should not be set (%@)", entity);
     STAssertNil(entity.someDate, @"some_date is badly formatted => entity.someDate should not be set (%@)", entity.someDate);
@@ -130,8 +129,7 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                               inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary];
     
     STAssertNil(entity, @"JSON object without id should not create a CoreData object: %@", entity);
 }
@@ -144,8 +142,7 @@
                                                                      error:NULL];
     
     // update one entity with id 5
-    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary
-                                               inManagedObjectContext:_managedObjectContext];
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary];
     
     URL = [NSURL URLWithString:@"http://0.0.0.0:3000/api/root/:id/bla"];
     URL = [URL URLBySubstitutingAttributesWithManagedObject:entity];

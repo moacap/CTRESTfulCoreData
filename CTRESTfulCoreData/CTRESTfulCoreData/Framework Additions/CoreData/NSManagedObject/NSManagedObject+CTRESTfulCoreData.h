@@ -29,15 +29,19 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 + (CTManagedObjectValidationModel *)validationModelForManagedObjectContext:(NSManagedObjectContext *)context;
 
 /**
+ @warning: You need to overwrite this method and return a threadsafe NSManagedObjectContext here.
+ */
++ (NSManagedObjectContext *)managedObjectContext;
+
+/**
  @return NSRelationshipDescription whichs name is relationshipName.
  */
-+ (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName
-                                                  inContext:(NSManagedObjectContext *)context;
++ (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName;
 
 /**
  @return NSArray with a NSString for each attribute belonging to this entity.
  */
-+ (NSArray *)attributeNamesInManagedObjectContext:(NSManagedObjectContext *)context;
++ (NSArray *)attributeNames;
 
 /**
  By default, this methods looks for a class which name starts with this classes prefix and end with BackgoundQueue.
@@ -58,8 +62,7 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 /**
  Searches for an existing entity with id given in dictionary and updates attributes or created new one with given attributes.
  */
-+ (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)dictionary
-                  inManagedObjectContext:(NSManagedObjectContext *)context;
++ (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)dictionary;
 
 /**
  Updates the actual instance with the given JSON dictionary;
@@ -70,7 +73,6 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  Fetches an array of objects for this class and stores it in core data. URL is expected to return an NSArray with NSDictionaries which contain the JSON object.
  */
 + (void)fetchObjectsFromURL:(NSURL *)URL
-     inManagedObjectContext:(NSManagedObjectContext *)context
           completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
 /**
