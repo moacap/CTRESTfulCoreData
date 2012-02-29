@@ -29,6 +29,12 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 + (CTManagedObjectValidationModel *)validationModelForManagedObjectContext:(NSManagedObjectContext *)context;
 
 /**
+ @return NSRelationshipDescription whichs name is relationshipName.
+ */
++ (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName
+                                                  inContext:(NSManagedObjectContext *)context;
+
+/**
  @return NSArray with a NSString for each attribute belonging to this entity.
  */
 + (NSArray *)attributeNamesInManagedObjectContext:(NSManagedObjectContext *)context;
@@ -78,7 +84,6 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  */
 - (void)fetchObjectsForRelationship:(NSString *)relationship
                             fromURL:(NSURL *)URL
-             inManagedObjectContext:(NSManagedObjectContext *)context
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
 @end

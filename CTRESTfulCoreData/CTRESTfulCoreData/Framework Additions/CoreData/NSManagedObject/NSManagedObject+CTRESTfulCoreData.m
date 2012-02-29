@@ -24,6 +24,14 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     return entityDescription.attributesByName.allKeys;
 }
 
++ (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName
+                                                  inContext:(NSManagedObjectContext *)context
+{
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self)
+                                                         inManagedObjectContext:context];
+    return [entityDescription.relationshipsByName objectForKey:relationshipName];
+}
+
 + (id<CTRESTfulCoreDataBackgroundQueue>)backgroundQueue
 {
     NSString *className = objc_getAssociatedObject(self, &CTRESTfulCoreDataBackgroundQueueNameKey);
@@ -142,15 +150,18 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
      inManagedObjectContext:(NSManagedObjectContext *)context
           completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler
 {
+    // send request to given URL
     [self.backgroundQueue getRequestToURL:URL
                         completionHandler:^(NSArray *JSONObject, NSError *error)
      {
          if (error != nil) {
+             // check for error
              completionHandler(nil, error);
          } else if (![JSONObject isKindOfClass:NSArray.class]) {
+             // make sure JSONObject has correct class
              completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
          } else {
-             // success
+             // success for now
              NSMutableArray *updatedObjects = [NSMutableArray arrayWithCapacity:JSONObject.count];
              
              // convert all JSON objects into NSManagedObjects
@@ -177,10 +188,82 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 - (void)fetchObjectsForRelationship:(NSString *)relationship
                             fromURL:(NSURL *)URL
-             inManagedObjectContext:(NSManagedObjectContext *)context
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler
 {
-    
+    // send request to given URL
+    [self.class.backgroundQueue getRequestToURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
+                              completionHandler:^(id JSONObject, NSError *error)
+     {
+         if (error) {
+             // check for error
+             completionHandler(nil, error);
+         } else {
+             // success for now
+             
+             // get relationship description, name of destination entity and the name of the invers relation.
+             NSRelationshipDescription *relationshipDescription = [self.class relationshipDescriptionNamed:relationship
+                                                                                                 inContext:self.managedObjectContext];
+             NSAssert(relationshipDescription != nil, @"There is no relationship %@ for %@", relationship, self.class);
+             
+             NSString *destinationClassName = relationshipDescription.destinationEntity.managedObjectClassName;
+             NSAssert(destinationClassName != nil, @"no managedObjectClassName specified for destinationEntity %@", relationshipDescription.destinationEntity);
+             NSString *inverseRelationshipName = relationshipDescription.inverseRelationship.name;
+             NSAssert(inverseRelationshipName != nil, @"no inverseRelationshipName specified for relationshipDescription %@", relationshipDescription);
+             
+             // update attributes based in relationship type
+             if (relationshipDescription.isToMany) {
+                 // is a 1-to-many relation
+                 if (![JSONObject isKindOfClass:NSArray.class]) {
+                     // make sure JSONObject has correct class
+                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+                     return;
+                 }
+                 NSArray *JSONObjectsArray = JSONObject;
+                 
+                 NSMutableArray *updatedObjects = [NSMutableArray arrayWithCapacity:JSONObjectsArray.count];
+                 
+                 // enumerate raw JSON objects and update destination entity with these.
+                 for (NSDictionary *rawDictionary in JSONObjectsArray) {
+                     if (![rawDictionary isKindOfClass:NSDictionary.class]) {
+                         // make sure JSONObject has correct class
+                         completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+                         return;
+                     }
+                     
+                     id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary
+                                                                                      inManagedObjectContext:self.managedObjectContext];
+                     [object setValue:self forKey:inverseRelationshipName];
+                     
+                     if (object) {
+                         [updatedObjects addObject:object];
+                     } else {
+                         completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
+                         return;
+                     }
+                 }
+                 
+                 completionHandler(updatedObjects, nil);
+             } else {
+                 if (![JSONObject isKindOfClass:NSDictionary.class]) {
+                     // make sure JSONObject has correct class
+                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+                     return;
+                 }
+                 
+                 // update destination entity with JSON object.
+                 id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject
+                                                                                  inManagedObjectContext:self.managedObjectContext];
+                 [self setValue:object forKey:relationship];
+                 
+                 if (object) {
+                     completionHandler([NSArray arrayWithObject:object], nil);
+                 } else {
+                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
+                     return;
+                 }
+             }
+         }
+     }];
 }
 
 @end
