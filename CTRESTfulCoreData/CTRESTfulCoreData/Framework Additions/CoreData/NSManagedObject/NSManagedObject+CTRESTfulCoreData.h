@@ -6,10 +6,13 @@
 //  Copyright (c) 2012 ebf. All rights reserved.
 //
 
+#import "CTRESTfulCoreDataBackgroundQueue.h"
+
 @class CTManagedObjectMappingModel, CTManagedObjectValidationModel;
 
 extern NSString *const CTRESTfulCoreDataMappingModelKey;
 extern NSString *const CTRESTfulCoreDataValidationModelKey;
+extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 
 
 
@@ -29,6 +32,13 @@ extern NSString *const CTRESTfulCoreDataValidationModelKey;
  @return NSArray with a NSString for each attribute belonging to this entity.
  */
 + (NSArray *)attributeNamesInManagedObjectContext:(NSManagedObjectContext *)context;
+
+/**
+ By default, this methods looks for a class which name starts with this classes prefix and end with BackgoundQueue.
+ 
+ TTEntity1 will look for a background queue TTBackgroundQueue. Overwrite for custom behaviour.
+ */
++ (id<CTRESTfulCoreDataBackgroundQueue>)backgroundQueue;
 
 /**
  Registers a mapping between a CoreData attribute and a corresponding key path of a JSON object, with which this object will be updated.
@@ -51,9 +61,10 @@ extern NSString *const CTRESTfulCoreDataValidationModelKey;
 - (void)updateWithRawJSONDictionary:(NSDictionary *)dictionary;
 
 /**
- Fetches an array of objects for this class and stores it in core data.
+ Fetches an array of objects for this class and stores it in core data. URL is expected to return an NSArray with NSDictionaries which contain the JSON object.
  */
 + (void)fetchObjectsFromURL:(NSURL *)URL
+     inManagedObjectContext:(NSManagedObjectContext *)context
           completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
 /**
@@ -67,6 +78,7 @@ extern NSString *const CTRESTfulCoreDataValidationModelKey;
  */
 - (void)fetchObjectsForRelationship:(NSString *)relationship
                             fromURL:(NSURL *)URL
+             inManagedObjectContext:(NSManagedObjectContext *)context
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
 @end

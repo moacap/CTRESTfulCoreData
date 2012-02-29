@@ -28,6 +28,9 @@
 		A78538B814FB77F800D29EB0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A78538B714FB77F700D29EB0 /* CoreData.framework */; };
 		A79224C914FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A79224C714FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h */; };
 		A79224CA14FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A79224C814FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m */; };
+		A79224CC14FE1E4B00449314 /* CTRESTfulCoreDataBackgroundQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = A79224CB14FE1E4B00449314 /* CTRESTfulCoreDataBackgroundQueue.h */; };
+		A79224D014FE215300449314 /* NSError+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A79224CE14FE215300449314 /* NSError+CTRESTfulCoreData.h */; };
+		A79224D114FE215300449314 /* NSError+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A79224CF14FE215300449314 /* NSError+CTRESTfulCoreData.m */; };
 		A7C578C814FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */; };
 		A7C578C914FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */; };
 		A7C578CA14FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */; };
@@ -76,6 +79,9 @@
 		A78538B714FB77F700D29EB0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A79224C714FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
 		A79224C814FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
+		A79224CB14FE1E4B00449314 /* CTRESTfulCoreDataBackgroundQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTRESTfulCoreDataBackgroundQueue.h; sourceTree = "<group>"; };
+		A79224CE14FE215300449314 /* NSError+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSError+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
+		A79224CF14FE215300449314 /* NSError+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSError+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
 		A7C578BF14FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
 		A7C578C014FB85C8000391F9 /* NSManagedObject+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
 		A7C578C314FB85C8000391F9 /* NSDate+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
@@ -183,6 +189,7 @@
 				A785389514FB778600D29EB0 /* CTRESTfulCoreData.h */,
 				A785389614FB778600D29EB0 /* CTRESTfulCoreData.m */,
 				A785389314FB778600D29EB0 /* Supporting Files */,
+				A79224CB14FE1E4B00449314 /* CTRESTfulCoreDataBackgroundQueue.h */,
 			);
 			path = CTRESTfulCoreData;
 			sourceTree = "<group>";
@@ -226,6 +233,15 @@
 			path = NSURL;
 			sourceTree = "<group>";
 		};
+		A79224CD14FE213D00449314 /* NSError */ = {
+			isa = PBXGroup;
+			children = (
+				A79224CE14FE215300449314 /* NSError+CTRESTfulCoreData.h */,
+				A79224CF14FE215300449314 /* NSError+CTRESTfulCoreData.m */,
+			);
+			path = NSError;
+			sourceTree = "<group>";
+		};
 		A7C578BC14FB85C8000391F9 /* Framework Additions */ = {
 			isa = PBXGroup;
 			children = (
@@ -256,6 +272,7 @@
 			isa = PBXGroup;
 			children = (
 				A7C578C214FB85C8000391F9 /* NSDate */,
+				A79224CD14FE213D00449314 /* NSError */,
 				A75E5BDD14FCFACA00E1F2E3 /* NSObject */,
 				A7C578C514FB85C8000391F9 /* NSString */,
 				A79224C514FCFFC600449314 /* NSURL */,
@@ -304,6 +321,8 @@
 				A727281C14FCD2B5007C4D96 /* CTManagedObjectValidationModel.h in Headers */,
 				A75E5BE114FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.h in Headers */,
 				A79224C914FCFFDF00449314 /* NSURL+CTRESTfulCoreData.h in Headers */,
+				A79224CC14FE1E4B00449314 /* CTRESTfulCoreDataBackgroundQueue.h in Headers */,
+				A79224D014FE215300449314 /* NSError+CTRESTfulCoreData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +435,7 @@
 				A727281D14FCD2B5007C4D96 /* CTManagedObjectValidationModel.m in Sources */,
 				A75E5BE214FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.m in Sources */,
 				A79224CA14FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m in Sources */,
+				A79224D114FE215300449314 /* NSError+CTRESTfulCoreData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,7 @@
 
 NSString *const CTRESTfulCoreDataMappingModelKey = @"CTRESTfulCoreDataMappingModelKey";
 NSString *const CTRESTfulCoreDataValidationModelKey = @"CTRESTfulCoreDataValidationModelKey";
+NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBackgroundQueueNameKey";
 
 
 
@@ -21,6 +22,23 @@ NSString *const CTRESTfulCoreDataValidationModelKey = @"CTRESTfulCoreDataValidat
                                                          inManagedObjectContext:context];
     
     return entityDescription.attributesByName.allKeys;
+}
+
++ (id<CTRESTfulCoreDataBackgroundQueue>)backgroundQueue
+{
+    NSString *className = objc_getAssociatedObject(self, &CTRESTfulCoreDataBackgroundQueueNameKey);
+    
+    if (!className) {
+        NSString *prefix = [self classPrefix];
+        className = [NSString stringWithFormat:@"%@BackgroundQueue", prefix];
+        objc_setAssociatedObject(self, &CTRESTfulCoreDataBackgroundQueueNameKey, className, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
+    Class backgroundQueueClass = NSClassFromString(className);
+    NSAssert(backgroundQueueClass != nil, @"There is no class named %@. Create a class with this name or overwrite +[NSManagedObject backgroundQueue].", className);
+    NSAssert(class_conformsToProtocol(backgroundQueueClass, @protocol(CTRESTfulCoreDataBackgroundQueue)), @"Class %@ does not conform to CTRESTfulCoreDataBackgroundQueue protocol", backgroundQueueClass);
+    
+    return [backgroundQueueClass sharedInstance];
 }
 
 + (CTManagedObjectMappingModel *)mappingModel
@@ -121,13 +139,45 @@ NSString *const CTRESTfulCoreDataValidationModelKey = @"CTRESTfulCoreDataValidat
 }
 
 + (void)fetchObjectsFromURL:(NSURL *)URL
+     inManagedObjectContext:(NSManagedObjectContext *)context
           completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler
 {
-    
+    [self.backgroundQueue getRequestToURL:URL
+                        completionHandler:^(NSArray *JSONObject, NSError *error)
+     {
+         if (error != nil) {
+             completionHandler(nil, error);
+         } else if (![JSONObject isKindOfClass:NSArray.class]) {
+             completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+         } else {
+             // success
+             NSMutableArray *updatedObjects = [NSMutableArray arrayWithCapacity:JSONObject.count];
+             
+             // convert all JSON objects into NSManagedObjects
+             for (NSDictionary *rawDictionary in JSONObject) {
+                 if (![rawDictionary isKindOfClass:NSDictionary.class]) {
+                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+                     return;
+                 }
+                 
+                 id object = [self updatedObjectWithRawJSONDictionary:rawDictionary
+                                               inManagedObjectContext:context];
+                 if (object) {
+                     [updatedObjects addObject:object];
+                 } else {
+                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
+                     return;
+                 }
+             }
+             
+             completionHandler(updatedObjects, nil);
+         }
+     }];
 }
 
 - (void)fetchObjectsForRelationship:(NSString *)relationship
                             fromURL:(NSURL *)URL
+             inManagedObjectContext:(NSManagedObjectContext *)context
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler
 {
     
