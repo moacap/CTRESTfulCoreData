@@ -23,6 +23,7 @@ CTRESTfulCoreData is a REST interface for CoreData.
 ```
 
 * By default, each subclass searches for a backround queue in its namespace. `TTEntity1` will seach for `TTBackgroundQueue`. Overwrite +[NSManagedObject backgroundQueue] for custom behaviour.
+
 ```objc
 + (id<CTRESTfulCoreDataBackgroundQueue>)backgroundQueue
 {
