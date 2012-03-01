@@ -75,4 +75,5 @@ An easy to use interface for fetching remote JSON objects via
 @end
 ```
 
-Fetching 
+Fetching objects for relationships supports URL substitution:
+For each `:some_id` in the URL, CTRESTfulCoreData automatically substitutes the correct value of the calling model.
