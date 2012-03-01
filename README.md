@@ -22,6 +22,14 @@ CTRESTfulCoreData is a REST interface for CoreData.
 }
 ```
 
+* By default, each subclass searches for a backround queue in its namespace. `TTEntity1` will seach for `TTBackgroundQueue`. Overwrite +[NSManagedObject backgroundQueue] for custom behaviour.
+```objc
++ (id<CTRESTfulCoreDataBackgroundQueue>)backgroundQueue
+{
+    return [ECCommunicationQueue sharedInstance];
+}
+```
+
 ### JSON object attribute validation
 
 Validation is automatically performed based on your managed object model. If an managed object's attribute is a string, CTRESTfulCoreData will only set an attribute iff the corresponding JSON object returns a NSString subsclass for teh given attribute. `NSNull` and other incorrect attributes are automatically filtered out.
