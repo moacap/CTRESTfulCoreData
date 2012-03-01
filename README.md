@@ -53,3 +53,20 @@ By default, CTRESTfulCoreData maps each attribute of a managed object to an unde
     [self registerAttributeName:@"identifier" forJSONObjectKeyPath:@"id"];
 }
 ```
+
+## What you get
+
+An easy to use interface for fetching remote JSON objects via
+
+```objc
+@interface NSManagedObject (CTRESTfulCoreDataQueryInterface)
+
++ (void)fetchObjectsFromURL:(NSURL *)URL
+          completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
+- (void)fetchObjectsForRelationship:(NSString *)relationship
+                            fromURL:(NSURL *)URL
+                  completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
+@end
+```
