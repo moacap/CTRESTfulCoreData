@@ -8,6 +8,7 @@ CTRESTfulCoreData is a REST interface for CoreData.
 
 * Each attribute of a managed object is camelized.
 * Each managed object has its own subclass.
+* Each JSON object comes with its own `id`.
 
 ### Mapping between JSON objects and ManagedObjects
 
