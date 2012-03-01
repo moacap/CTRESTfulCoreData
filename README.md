@@ -14,6 +14,14 @@ CTRESTfulCoreData is a REST interface for CoreData.
 
 Validation is automatically performed based on your managed object model. If an managed object's attribute is a string, CTRESTfulCoreData will only set an attribute iff the corresponding JSON object returns a NSString subsclass for teh given attribute. `NSNull` and other incorrect attributes are automatically filtered out.
 
+Supported attribute types and expected JSON object classes are
+
+* `NSNumber` <=> `NSInteger16AttributeType`, `NSInteger32AttributeType`, `NSInteger64AttributeType`, `NSDecimalAttributeType`, `NSDoubleAttributeType`, `NSFloatAttributeType`, `NSBooleanAttributeType`
+* `NSString` <=> `NSStringAttributeType`
+* `NSString` <=> `NSDateAttributeType`
+  *  Date strings will automatically by converted to NSDate by format specified in CTRESTfulCoreDataDateFormatString.
+* `NSTransformableAttributeType` <=> Uses specified value transformer to convert between objects.
+
 ### Mapping between JSON objects and ManagedObjects
 
 By default, CTRESTfulCoreData maps each attribute of a managed object to an underscored attribute in a JSON object. If your managed object has an attribute `@property (nonatomic, strong) NSString *someString;`, the JSON object is expected to return a string for the key `some_string`. To implement custom attribute mapping, have your subclass implement
