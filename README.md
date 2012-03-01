@@ -54,6 +54,10 @@ By default, CTRESTfulCoreData maps each attribute of a managed object to an unde
 }
 ```
 
+### Background queue
+
+You need to provide a background queue that conforms to the protocol `CTRESTfulCoreDataBackgroundQueue` and communicates with the network.
+
 ## What you get
 
 An easy to use interface for fetching remote JSON objects via
@@ -70,3 +74,5 @@ An easy to use interface for fetching remote JSON objects via
 
 @end
 ```
+
+Fetching 
