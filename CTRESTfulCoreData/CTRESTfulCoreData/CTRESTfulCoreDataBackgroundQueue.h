@@ -10,7 +10,7 @@
 
 @protocol CTRESTfulCoreDataBackgroundQueue <NSObject>
 
-+ (id<CTRESTfulCoreDataBackgroundQueue>)sharedInstance;
++ (id<CTRESTfulCoreDataBackgroundQueue>)sharedQueue;
 
 /**
  Sends a get request to a given URL.
