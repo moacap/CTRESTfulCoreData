@@ -265,6 +265,23 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
              }
          }
      }];
+
++ (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs
+{
+    NSManagedObjectContext *context = self.managedObjectContext;
+    CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+    NSString *idKey = [mappingModel keyForManagedObjectFromJSONObjectKeyPath:@"id"];
+    
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass(self)];
+    request.predicate = [NSPredicate predicateWithFormat:@"%K NOT IN %@", idKey, remoteIDs];
+    
+    NSError *error = nil;
+    NSArray *objectsToBeDeleted = [context executeFetchRequest:request error:&error];
+    NSAssert(error == nil, @"error while fetching: %@", error);
+    
+    for (id object in objectsToBeDeleted) {
+        [context deleteObject:object];
+    }
 }
 
 @end

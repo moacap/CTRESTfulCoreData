@@ -88,4 +88,9 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
                             fromURL:(NSURL *)URL
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
+/**
+ Deletes a set of objects with given remote IDs.
+ */
++ (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs;
+
 @end
