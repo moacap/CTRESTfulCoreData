@@ -16,6 +16,48 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 
 
 
+@interface NSManagedObject (CTRESTfulCoreDataQueryInterface)
+
+/**
+ Calls +[NSManagedObject fetchObjectsFromURL:URL deleteEveryOtherObject:YES completionHandler:completionHandler].
+ */
++ (void)fetchObjectsFromURL:(NSURL *)URL
+          completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
+/**
+ Fetches an array of objects or a single object for this class and stores it in core data. URL is expected to return an NSArray with NSDictionaries which contain the JSON object.
+ 
+ @param deleteEveryOtherObject: If YES, each object that is not returned by the API will be deleted from the data base
+ */
++ (void)fetchObjectsFromURL:(NSURL *)URL
+     deleteEveryOtherObject:(BOOL)deleteEveryOtherObject
+          completionHandler:(void (^)(NSArray *, NSError *))completionHandler;
+
+/**
+ Calls -[NSManagedObject fetchObjectsForRelationship:relationship fromURL:URL deleteEveryOtherObject:YES completionHandler:completionHandler].
+ */
+- (void)fetchObjectsForRelationship:(NSString *)relationship
+                            fromURL:(NSURL *)URL
+                  completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
+/**
+ Fetches objects from a URL for a given relationship.
+ 
+ URL support substitution of object specific attributes:
+ http://0.0.0.0:3000/api/object/:some_id/relationship
+ where :some_id will be substituted with the content of the attribute from this self with someID or whatever mapping was specified.
+ 
+ Supported relationships are 1-to-many and 1-to-1.
+ */
+- (void)fetchObjectsForRelationship:(NSString *)relationship
+                            fromURL:(NSURL *)URL
+             deleteEveryOtherObject:(BOOL)deleteEveryOtherObject
+                  completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+
+@end
+
+
+
 @interface NSManagedObject (CTRESTfulCoreData)
 
 /**
@@ -70,23 +112,14 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 - (void)updateWithRawJSONDictionary:(NSDictionary *)dictionary;
 
 /**
- Fetches an array of objects for this class and stores it in core data. URL is expected to return an NSArray with NSDictionaries which contain the JSON object.
+ @return Fetches an object of this class from database with a given it of a remote object.
  */
-+ (void)fetchObjectsFromURL:(NSURL *)URL
-          completionHandler:(void(^)(NSArray *fetchedObjects, NSError *error))completionHandler;
++ (id)objectWithRemoteID:(NSNumber *)ID;
 
 /**
- Fetches objects from a URL for a given relationship.
- 
- URL support substitution of object specific attributes:
- http://0.0.0.0:3000/api/object/:some_id/relationship
- where :some_id will be substituted with the content of the attribute from this self with someID or whatever mapping was specified.
- 
- Supported relationships are 1-to-many and 1-to-1.
+ @return Sorted array of a given relationship by a given attribute.
  */
-- (void)fetchObjectsForRelationship:(NSString *)relationship
-                            fromURL:(NSURL *)URL
-                  completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
+- (NSArray *)objectsFromRelationship:(NSString *)relationship sortedByAttribute:(NSString *)attribute;
 
 /**
  Deletes a set of objects with given remote IDs.
