@@ -6,6 +6,8 @@
 //  Copyright 2012 ebf. All rights reserved.
 //
 
+#import "CTRESTfulCoreDataGlobal.h"
+
 BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType);
 
 
@@ -19,7 +21,13 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType);
     NSString *_managedObjectClassName;
     NSDictionary *_attributTypesValidationDictionary;
     NSDictionary *_valueTransformerNamesDictionary;
+    
+    CTCustomTransformableValueTransformationHandler _valueTransformationHandler;
+    CTCustomTransformableValueTransformationHandler _inverseValueTransformationHandler;
 }
+
+@property (nonatomic, copy) CTCustomTransformableValueTransformationHandler valueTransformationHandler;
+@property (nonatomic, copy) CTCustomTransformableValueTransformationHandler inverseValueTransformationHandler;
 
 - (id)initWithManagedObjectClassName:(NSString *)managedObjectClassName
               inManagedObjectContext:(NSManagedObjectContext *)context;

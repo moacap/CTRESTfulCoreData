@@ -6,6 +6,8 @@
 //  Copyright 2012 ebf. All rights reserved.
 //
 
+#import "CTRESTfulCoreDataGlobal.h"
+
 
 
 /**
@@ -16,12 +18,24 @@
 @private
     NSMutableDictionary *_managedObjectJSONObjectAttributesDictionary; // { "myValue" : "my_value" }
     NSMutableDictionary *_JSONObjectManagedObjectAttributesDictionary; // { "my_value" : "myValue" }
+    
+    NSMutableDictionary *_valueTransformerHandlers;
+    NSMutableDictionary *_inverseValueTransformerHandlers;
 }
 
 - (void)registerAttribute:(NSString *)attribute
      forJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
 
+- (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
+          forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
+
+- (void)registerInverseValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)inservseValueTransformerHandler
+                 forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
+
 - (NSString *)keyForJSONObjectFromManagedObjectAttribute:(NSString *)attribute;
 - (NSString *)keyForManagedObjectFromJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
+
+- (CTCustomTransformableValueTransformationHandler)valueTransformerForManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
+- (CTCustomTransformableValueTransformationHandler)inverseValueTransformerForManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
 
 @end

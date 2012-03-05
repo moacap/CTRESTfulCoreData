@@ -21,6 +21,8 @@
         // Initialization code
         _managedObjectJSONObjectAttributesDictionary = [NSMutableDictionary dictionary];
         _JSONObjectManagedObjectAttributesDictionary = [NSMutableDictionary dictionary];
+        _valueTransformerHandlers = [NSMutableDictionary dictionary];
+        _inverseValueTransformerHandlers = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -36,6 +38,18 @@
     [_JSONObjectManagedObjectAttributesDictionary setObject:attribute forKey:JSONObjectKeyPath];
 }
 
+- (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
+          forManagedObjectAttributeName:(NSString *)managedObjectAttributeName
+{
+    [_valueTransformerHandlers setObject:[valueTransformerHandler copy] forKey:managedObjectAttributeName];
+}
+
+- (void)registerInverseValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)inservseValueTransformerHandler
+                 forManagedObjectAttributeName:(NSString *)managedObjectAttributeName
+{
+    [_inverseValueTransformerHandlers setObject:[inservseValueTransformerHandler copy] forKey:managedObjectAttributeName];
+}
+
 - (NSString *)keyForJSONObjectFromManagedObjectAttribute:(NSString *)attribute
 {
     NSString *key = [_managedObjectJSONObjectAttributesDictionary objectForKey:attribute];
@@ -46,6 +60,16 @@
 {
     NSString *key = [_JSONObjectManagedObjectAttributesDictionary objectForKey:JSONObjectKeyPath];
     return key ? key : JSONObjectKeyPath.stringByCamelizingString;
+}
+
+- (CTCustomTransformableValueTransformationHandler)valueTransformerForManagedObjectAttributeName:(NSString *)managedObjectAttributeName
+{
+    return [_valueTransformerHandlers objectForKey:managedObjectAttributeName];
+}
+
+- (CTCustomTransformableValueTransformationHandler)inverseValueTransformerForManagedObjectAttributeName:(NSString *)managedObjectAttributeName
+{
+    return [_inverseValueTransformerHandlers objectForKey:managedObjectAttributeName];
 }
 
 @end

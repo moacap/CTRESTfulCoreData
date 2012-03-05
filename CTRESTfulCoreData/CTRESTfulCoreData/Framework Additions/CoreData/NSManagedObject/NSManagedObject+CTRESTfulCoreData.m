@@ -253,6 +253,29 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     
     if (!validationModel) {
         validationModel = [[CTManagedObjectValidationModel alloc] initWithManagedObjectClassName:NSStringFromClass(self) inManagedObjectContext:context];
+        
+        [validationModel setValueTransformationHandler:^id(id object, NSString *managedObjectAttributeName) {
+            CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+            
+            CTCustomTransformableValueTransformationHandler valueTransformer = [mappingModel valueTransformerForManagedObjectAttributeName:managedObjectAttributeName];
+            if (valueTransformer) {
+                return valueTransformer(object, managedObjectAttributeName);
+            }
+            
+            return nil;
+        }];
+        
+        [validationModel setInverseValueTransformationHandler:^id(id object, NSString *managedObjectAttributeName) {
+            CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+            
+            CTCustomTransformableValueTransformationHandler valueTransformer = [mappingModel inverseValueTransformerForManagedObjectAttributeName:managedObjectAttributeName];
+            if (valueTransformer) {
+                return valueTransformer(object, managedObjectAttributeName);
+            }
+            
+            return nil;
+        }];
+        
         objc_setAssociatedObject(self, &CTRESTfulCoreDataValidationModelKey, validationModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     
@@ -264,6 +287,24 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
     
     [mappingModel registerAttribute:attributeName forJSONObjectKeyPath:JSONObjectKeyPath];
+}
+
++ (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
+          forManagedObjectAttributeName:(NSString *)managedObjectAttributeName
+{
+    CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+    
+    [mappingModel registerValueTransformerHandler:valueTransformerHandler
+                    forManagedObjectAttributeName:managedObjectAttributeName];
+}
+
++ (void)registerInverseValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)inservseValueTransformerHandler
+                 forManagedObjectAttributeName:(NSString *)managedObjectAttributeName
+{
+    CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+    
+    [mappingModel registerInverseValueTransformerHandler:inservseValueTransformerHandler
+                           forManagedObjectAttributeName:managedObjectAttributeName];
 }
 
 + (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)rawDictionary

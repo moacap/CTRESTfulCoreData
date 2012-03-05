@@ -7,6 +7,7 @@
 //
 
 #import "CTRESTfulCoreDataBackgroundQueue.h"
+#import "CTRESTfulCoreDataGlobal.h"
 
 @class CTManagedObjectMappingModel, CTManagedObjectValidationModel;
 
@@ -100,6 +101,18 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  */
 + (void)registerAttributeName:(NSString *)attributeName
          forJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
+
+/**
+ Registers a custom value transformer handler for a managed object attribute name.
+ */
++ (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
+          forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
+
+/**
+ Registers a custom inverse value transformer handler for a managed object attribute name.
+ */
++ (void)registerInverseValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)inservseValueTransformerHandler
+                 forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
 
 /**
  Searches for an existing entity with id given in dictionary and updates attributes or created new one with given attributes.

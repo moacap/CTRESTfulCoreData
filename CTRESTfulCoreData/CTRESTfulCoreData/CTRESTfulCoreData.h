@@ -16,6 +16,9 @@
 #import "CTManagedObjectMappingModel.h"
 #import "CTManagedObjectValidationModel.h"
 
+#import "CTRESTfulCoreDataGlobal.h"
+#import "CTRESTfulCoreDataBackgroundQueue.h"
+
 /**
  Format string with which dates will be converted. Default is @"yyyy-MM-dd'T'HH:mm:ss'Z'".
  */

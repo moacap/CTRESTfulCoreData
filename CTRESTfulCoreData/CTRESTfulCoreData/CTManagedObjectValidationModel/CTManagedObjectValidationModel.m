@@ -26,6 +26,7 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
 
 
 @implementation CTManagedObjectValidationModel
+@synthesize valueTransformationHandler=_valueTransformationHandler, inverseValueTransformationHandler=_inverseValueTransformationHandler;
 
 #pragma mark - Initialization
 
@@ -49,9 +50,10 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
              
              if (attributeType == NSTransformableAttributeType) {
                  NSString *valueTransformerName = attributeDescription.valueTransformerName;
-                 NSAssert(valueTransformerName != nil, @"No valueTransformerName specified for attribute %@ of entity %@", attributeName, managedObjectClassName);
                  
-                 [valueTransformerNamesDictionary setObject:valueTransformerName forKey:attributeName];
+                 if (valueTransformerName) {
+                     [valueTransformerNamesDictionary setObject:valueTransformerName forKey:attributeName];
+                 }
              }
          }];
         
@@ -105,10 +107,17 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
     } else if (attributeType == NSDateAttributeType) {
         return [(NSString *)object CTRESTfulCoreDataDateRepresentation];
     } else if (attributeType == NSTransformableAttributeType) {
+        id resultObject = nil;
         NSString *valueTransformerName = [_valueTransformerNamesDictionary objectForKey:managedObjectAttributeName];
         NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:valueTransformerName];
         
-        return [valueTransformer transformedValue:object];
+        if (valueTransformer) {
+            resultObject = [valueTransformer transformedValue:object];
+        } else if (_valueTransformationHandler) {
+            resultObject = _valueTransformationHandler(object, managedObjectAttributeName);
+        }
+        
+        return resultObject;
     }
     
     return nil;
@@ -123,10 +132,17 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
     } else if (attributeType == NSDateAttributeType) {
         return [(NSDate *)object CTRESTfulCoreDataDateRepresentation];
     } else if (attributeType == NSTransformableAttributeType) {
+        id resultObject = nil;
         NSString *valueTransformerName = [_valueTransformerNamesDictionary objectForKey:managedObjectAttributeName];
         NSValueTransformer *valueTransformer = [NSValueTransformer valueTransformerForName:valueTransformerName];
         
-        return [valueTransformer reverseTransformedValue:object];
+        if (valueTransformer) {
+            resultObject = [valueTransformer transformedValue:object];
+        } else if (_inverseValueTransformationHandler) {
+            resultObject = _inverseValueTransformationHandler(object, managedObjectAttributeName);
+        }
+        
+        return resultObject;
     }
     
     return nil;
