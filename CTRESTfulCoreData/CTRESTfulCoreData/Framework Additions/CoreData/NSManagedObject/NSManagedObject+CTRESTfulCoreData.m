@@ -138,7 +138,18 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self)
                                                          inManagedObjectContext:context];
     
-    return entityDescription.attributesByName.allKeys;
+    CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+    
+    NSArray *allAttributes = entityDescription.attributesByName.allKeys;
+    NSMutableArray *registeredAttributes = [NSMutableArray arrayWithCapacity:allAttributes.count];
+    
+    [allAttributes enumerateObjectsUsingBlock:^(NSString *attributeName, NSUInteger idx, BOOL *stop) {
+        if ([mappingModel isAttributeNameRegistered:attributeName]) {
+            [registeredAttributes addObject:attributeName];
+        }
+    }];
+    
+    return registeredAttributes;
 }
 
 + (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName
@@ -229,6 +240,13 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
     
     [mappingModel registerAttribute:attributeName forJSONObjectKeyPath:JSONObjectKeyPath];
+}
+
++ (void)unregisterAttributeName:(NSString *)attributeName
+{
+    CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+    
+    [mappingModel unregisterAttributeName:attributeName];
 }
 
 + (void)registerSubclass:(Class)subclass forManagedObjectAttributeName:(NSString *)managedObjectAttributeName withValue:(id)value

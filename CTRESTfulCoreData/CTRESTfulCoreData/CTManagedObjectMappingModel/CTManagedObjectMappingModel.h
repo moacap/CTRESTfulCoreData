@@ -23,10 +23,16 @@
     NSMutableDictionary *_inverseValueTransformerHandlers;
     
     NSMutableDictionary *_registeredSubclassesDictionary;
+    
+    NSMutableArray *_unregisteresAttributeNames;
 }
 
 - (void)registerAttribute:(NSString *)attribute
      forJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
+
+- (void)unregisterAttributeName:(NSString *)attributeName;
+
+- (BOOL)isAttributeNameRegistered:(NSString *)attributeName;
 
 - (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
           forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;

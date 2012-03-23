@@ -32,7 +32,7 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  */
 + (void)fetchObjectsFromURL:(NSURL *)URL
      deleteEveryOtherObject:(BOOL)deleteEveryOtherObject
-          completionHandler:(void (^)(NSArray *, NSError *))completionHandler;
+          completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
 /**
  Calls -[NSManagedObject fetchObjectsForRelationship:relationship fromURL:URL deleteEveryOtherObject:YES completionHandler:completionHandler].
@@ -101,6 +101,11 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  */
 + (void)registerAttributeName:(NSString *)attributeName
          forJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
+
+/**
+ Excludes attribute name from JSON object mapping an causes attributeName to not be set in updateWithRawJSONDictionary:.
+ */
++ (void)unregisterAttributeName:(NSString *)attributeName;
 
 /**
  Registers a custom subclass for a value of an attribute.

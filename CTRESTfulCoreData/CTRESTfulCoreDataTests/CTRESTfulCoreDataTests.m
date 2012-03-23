@@ -257,7 +257,18 @@
     STAssertEqualObjects(managedWorkflow2.type, @"subclass", @"type wrong");
     STAssertEqualObjects(managedWorkflow2.identifier, [NSNumber numberWithInt:2], @"id wrong");
     STAssertEqualObjects(managedWorkflow2.subclassAttribute, @"some value", @"subclassAttribute wrong");
+    
+}
 
+- (void)testUnregisteredAttributes
+{
+    NSDictionary *JSONDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSNumber numberWithInt:1331275], @"id",
+                                    @"this should not be there", @"unregistered_value",
+                                    nil];
+    
+    TTEntity1 *entity = [TTEntity1 updatedObjectWithRawJSONDictionary:JSONDictionary];
+    STAssertNil(entity.unregisteredValue, @"unregisteredValue should not be set.");
 }
 
 #pragma mark - CoreData

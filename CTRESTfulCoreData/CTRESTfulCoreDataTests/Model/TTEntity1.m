@@ -20,9 +20,11 @@ NSManagedObjectContext *testContext;
 @dynamic someNumber;
 @dynamic someStrangeString;
 @dynamic someString;
+@dynamic unregisteredValue;
 
 + (void)initialize
 {
+    [self unregisterAttributeName:@"unregisteredValue"];
     [self registerAttributeName:@"someStrangeString" forJSONObjectKeyPath:@"some_super_strange_string"];
 }
 

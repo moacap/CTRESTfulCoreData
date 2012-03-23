@@ -30,6 +30,7 @@
         _valueTransformerHandlers = [NSMutableDictionary dictionary];
         _inverseValueTransformerHandlers = [NSMutableDictionary dictionary];
         _registeredSubclassesDictionary = [NSMutableDictionary dictionary];
+        _unregisteresAttributeNames = [NSMutableArray array];
     }
     return self;
 }
@@ -43,6 +44,17 @@
     
     [_managedObjectJSONObjectAttributesDictionary setObject:JSONObjectKeyPath forKey:attribute];
     [_JSONObjectManagedObjectAttributesDictionary setObject:attribute forKey:JSONObjectKeyPath];
+}
+
+- (void)unregisterAttributeName:(NSString *)attributeName
+{
+    NSAssert(attributeName != nil, @"attributeName cannot be nil");
+    [_unregisteresAttributeNames addObject:attributeName];
+}
+
+- (BOOL)isAttributeNameRegistered:(NSString *)attributeName
+{
+    return ![_unregisteresAttributeNames containsObject:attributeName];
 }
 
 - (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
@@ -97,6 +109,8 @@
         
         [self _mergeDictionary:thisSubclassDictionary withOtherDictionary:otherSubclassDictionary];
     }];
+    
+    [_unregisteresAttributeNames addObjectsFromArray:otherMappingModel->_unregisteresAttributeNames];
 }
 
 - (NSString *)keyForJSONObjectFromManagedObjectAttribute:(NSString *)attribute

@@ -18,5 +18,6 @@ extern NSManagedObjectContext *testContext;
 @property (nonatomic, retain) NSNumber *someNumber;
 @property (nonatomic, retain) NSString *someStrangeString;
 @property (nonatomic, retain) NSString *someString;
+@property (nonatomic, retain) NSString *unregisteredValue;
 
 @end
