@@ -50,6 +50,34 @@
     [_inverseValueTransformerHandlers setObject:[inservseValueTransformerHandler copy] forKey:managedObjectAttributeName];
 }
 
+- (void)mergeWithMappingModel:(CTManagedObjectMappingModel *)otherMappingModel
+{
+    NSLog(@"MERGING with otherMappingModel->_managedObjectJSONObjectAttributesDictionary %@", otherMappingModel->_managedObjectJSONObjectAttributesDictionary);
+    [otherMappingModel->_managedObjectJSONObjectAttributesDictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if (![_managedObjectJSONObjectAttributesDictionary objectForKey:key]) {
+            [_managedObjectJSONObjectAttributesDictionary setObject:obj forKey:key];
+        }
+    }];
+    
+    [otherMappingModel->_JSONObjectManagedObjectAttributesDictionary enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if (![_JSONObjectManagedObjectAttributesDictionary objectForKey:key]) {
+            [_JSONObjectManagedObjectAttributesDictionary setObject:obj forKey:key];
+        }
+    }];
+    
+    [otherMappingModel->_valueTransformerHandlers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if (![_valueTransformerHandlers objectForKey:key]) {
+            [_valueTransformerHandlers setObject:obj forKey:key];
+        }
+    }];
+    
+    [otherMappingModel->_inverseValueTransformerHandlers enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        if (![_inverseValueTransformerHandlers objectForKey:key]) {
+            [_inverseValueTransformerHandlers setObject:obj forKey:key];
+        }
+    }];
+}
+
 - (NSString *)keyForJSONObjectFromManagedObjectAttribute:(NSString *)attribute
 {
     NSString *key = [_managedObjectJSONObjectAttributesDictionary objectForKey:attribute];

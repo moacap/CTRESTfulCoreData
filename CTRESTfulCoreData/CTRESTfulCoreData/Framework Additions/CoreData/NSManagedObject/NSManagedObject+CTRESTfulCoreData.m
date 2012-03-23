@@ -242,6 +242,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     if (!mappingModel) {
         mappingModel = [[CTManagedObjectMappingModel alloc] init];
         objc_setAssociatedObject(self, &CTRESTfulCoreDataMappingModelKey, mappingModel, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        
+        Class superclass = class_getSuperclass(self);
+        if ([superclass isSubclassOfClass:NSManagedObject.class]) {
+            [mappingModel mergeWithMappingModel:[superclass mappingModel]];
+        }
     }
     
     return mappingModel;

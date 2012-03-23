@@ -10,6 +10,11 @@
 #import "CTRESTfulCoreData.h"
 #import "TTEntity1.h"
 #import "Entity2.h"
+#import "TTWorkflow.h"
+#import "TTWorkflowSubsclass.h"
+#import "TTDashboard.h"
+
+
 
 @implementation CTRESTfulCoreDataTests
 
@@ -158,6 +163,27 @@
     URL = [URL URLBySubstitutingAttributesWithManagedObject:entity];
     expectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://0.0.0.0:3000/api/dashboard_content_containers/5/workflows?updated_at=%@", entity.someDate.CTRESTfulCoreDataDateRepresentation]];
     STAssertEqualObjects(URL, expectedURL, @":some_date substitution not working");
+}
+
+- (void)testInheritedModelShouldInheritMappingAndValidationModel
+{
+    // [self registerAttributeName:@"name" forJSONObjectKeyPath:@"__name"];
+    // CTManagedObjectMappingModel *workflowMappingModel = [TTWorkflow mappingModel];
+    
+    // [self registerAttributeName:@"subclassAttribute" forJSONObjectKeyPath:@"__subclass_attribute"];
+    CTManagedObjectMappingModel *workflowSubclassMappingModel = [TTWorkflowSubsclass mappingModel];
+    
+    STAssertEqualObjects([workflowSubclassMappingModel keyForJSONObjectFromManagedObjectAttribute:@"subclassAttribute"], @"__subclass_attribute", @"subclassAttribute wrong");
+    STAssertEqualObjects([workflowSubclassMappingModel keyForJSONObjectFromManagedObjectAttribute:@"name"], @"__name", @"mapping model of super class not onherited");
+    STAssertEqualObjects([workflowSubclassMappingModel keyForJSONObjectFromManagedObjectAttribute:@"blabla"], @"blabla2", @"mapping model of subsclass should bind stronger than mapping model of super class");
+    
+    CTManagedObjectValidationModel *subclassValidationModel = [TTWorkflowSubsclass validationModelForManagedObjectContext:testContext];
+    
+    NSString *convertedName = [subclassValidationModel managedObjectObjectFromJSONObjectObject:@"string" forManagedObjectAttribute:@"subclassAttribute"];
+    STAssertEqualObjects(convertedName, @"string", @"validation model not working for subclassAttribute");
+    
+    convertedName = [subclassValidationModel managedObjectObjectFromJSONObjectObject:@"stringor" forManagedObjectAttribute:@"name"];
+    STAssertEqualObjects(convertedName, @"stringor", @"validation model not working for name attribute from super class");
 }
 
 #pragma mark - CoreData

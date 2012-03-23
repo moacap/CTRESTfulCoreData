@@ -32,6 +32,8 @@
 - (void)registerInverseValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)inservseValueTransformerHandler
                  forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
 
+- (void)mergeWithMappingModel:(CTManagedObjectMappingModel *)otherMappingModel;
+
 - (NSString *)keyForJSONObjectFromManagedObjectAttribute:(NSString *)attribute;
 - (NSString *)keyForManagedObjectFromJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
 

@@ -19,6 +19,9 @@
 		A727285B14FCE551007C4D96 /* SampleEntityWithoutID.json in Resources */ = {isa = PBXBuildFile; fileRef = A727285A14FCE551007C4D96 /* SampleEntityWithoutID.json */; };
 		A75E5BE114FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E5BDF14FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.h */; };
 		A75E5BE214FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A75E5BE014FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.m */; };
+		A770BCAA151C57AF00E360A1 /* TTWorkflow.m in Sources */ = {isa = PBXBuildFile; fileRef = A770BCA9151C57AF00E360A1 /* TTWorkflow.m */; };
+		A770BCAD151C57C500E360A1 /* TTWorkflowSubsclass.m in Sources */ = {isa = PBXBuildFile; fileRef = A770BCAC151C57C500E360A1 /* TTWorkflowSubsclass.m */; };
+		A770BCB0151C57DC00E360A1 /* TTDashboard.m in Sources */ = {isa = PBXBuildFile; fileRef = A770BCAF151C57DC00E360A1 /* TTDashboard.m */; };
 		A785389114FB778600D29EB0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A785389014FB778600D29EB0 /* Foundation.framework */; };
 		A785389714FB778600D29EB0 /* CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A785389614FB778600D29EB0 /* CTRESTfulCoreData.m */; };
 		A785389F14FB778600D29EB0 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A785389E14FB778600D29EB0 /* SenTestingKit.framework */; };
@@ -67,6 +70,12 @@
 		A727285A14FCE551007C4D96 /* SampleEntityWithoutID.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SampleEntityWithoutID.json; sourceTree = "<group>"; };
 		A75E5BDF14FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
 		A75E5BE014FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
+		A770BCA8151C57AF00E360A1 /* TTWorkflow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTWorkflow.h; sourceTree = "<group>"; };
+		A770BCA9151C57AF00E360A1 /* TTWorkflow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTWorkflow.m; sourceTree = "<group>"; };
+		A770BCAB151C57C400E360A1 /* TTWorkflowSubsclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTWorkflowSubsclass.h; sourceTree = "<group>"; };
+		A770BCAC151C57C500E360A1 /* TTWorkflowSubsclass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTWorkflowSubsclass.m; sourceTree = "<group>"; };
+		A770BCAE151C57DC00E360A1 /* TTDashboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTDashboard.h; sourceTree = "<group>"; };
+		A770BCAF151C57DC00E360A1 /* TTDashboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTDashboard.m; sourceTree = "<group>"; };
 		A785388D14FB778600D29EB0 /* libCTRESTfulCoreData.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCTRESTfulCoreData.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A785389014FB778600D29EB0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A785389414FB778600D29EB0 /* CTRESTfulCoreData-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CTRESTfulCoreData-Prefix.pch"; sourceTree = "<group>"; };
@@ -131,6 +140,12 @@
 				A727281E14FCDC78007C4D96 /* APISampleEntity.json */,
 				A727285814FCE4DA007C4D96 /* BADAPISampleEntity.json */,
 				A727285A14FCE551007C4D96 /* SampleEntityWithoutID.json */,
+				A770BCA8151C57AF00E360A1 /* TTWorkflow.h */,
+				A770BCA9151C57AF00E360A1 /* TTWorkflow.m */,
+				A770BCAB151C57C400E360A1 /* TTWorkflowSubsclass.h */,
+				A770BCAC151C57C500E360A1 /* TTWorkflowSubsclass.m */,
+				A770BCAE151C57DC00E360A1 /* TTDashboard.h */,
+				A770BCAF151C57DC00E360A1 /* TTDashboard.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -452,6 +467,9 @@
 				A727281114FCCAD0007C4D96 /* Model.xcdatamodeld in Sources */,
 				A727281414FCCADE007C4D96 /* TTEntity1.m in Sources */,
 				A727281714FCCAED007C4D96 /* Entity2.m in Sources */,
+				A770BCAA151C57AF00E360A1 /* TTWorkflow.m in Sources */,
+				A770BCAD151C57C500E360A1 /* TTWorkflowSubsclass.m in Sources */,
+				A770BCB0151C57DC00E360A1 /* TTDashboard.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
