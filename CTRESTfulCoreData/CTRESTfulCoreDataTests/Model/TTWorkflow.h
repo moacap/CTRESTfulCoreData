@@ -14,6 +14,9 @@
 @interface TTWorkflow : NSManagedObject
 
 @property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSString * type;
 @property (nonatomic, retain) TTDashboard *dashboard;
+@property (nonatomic, strong) NSNumber *identifier;
+
 
 @end

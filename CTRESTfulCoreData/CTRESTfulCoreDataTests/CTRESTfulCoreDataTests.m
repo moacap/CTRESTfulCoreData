@@ -186,6 +186,80 @@
     STAssertEqualObjects(convertedName, @"stringor", @"validation model not working for name attribute from super class");
 }
 
+- (void)testRelationshipObjectDispatch
+{
+    NSMutableDictionary *dashboardJSONDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                                    [NSNumber numberWithInt:5], @"id",
+                                                    @"old name", @"name",
+                                                    nil];
+    TTDashboard *dashboard = [TTDashboard updatedObjectWithRawJSONDictionary:dashboardJSONDictionary];
+    STAssertEqualObjects(dashboard.name, @"old name", @"name wrong");
+    STAssertEqualObjects(dashboard.identifier, [NSNumber numberWithInt:5], @"identifier wrong");
+    
+    [dashboardJSONDictionary setObject:@"name" forKey:@"name"];
+    TTDashboard *newDashboard = [TTDashboard updatedObjectWithRawJSONDictionary:dashboardJSONDictionary];
+    
+    STAssertEquals(newDashboard, dashboard, @"same id should update same object");
+    STAssertEqualObjects(newDashboard.name, @"name", @"name wrong");
+    
+    //    @property (nonatomic, retain) NSString * name;                <-- __name
+    //    @property (nonatomic, retain) NSString * type;                <-- type
+    //    @property (nonatomic, strong) NSNumber *identifier;           <-- id
+    //    @property (nonatomic, retain) NSString * subclassAttribute;   <-- __subclass_attribute
+    NSDictionary *workflow1 = [NSDictionary dictionaryWithObjectsAndKeys:
+                               @"workflow1", @"__name",
+                               @"plain", @"type",
+                               [NSNumber numberWithInt:1], @"id",
+                               nil];
+    NSDictionary *workflow2 = [NSDictionary dictionaryWithObjectsAndKeys:
+                               @"workflow2", @"__name",
+                               @"subclass", @"type",
+                               [NSNumber numberWithInt:2], @"id",
+                               @"some value", @"__subclass_attribute",
+                               nil];
+    
+    NSArray *JSONArray = [NSArray arrayWithObjects:workflow1, workflow2, nil];
+    NSError *error = nil;
+    NSArray *updatedObjects = [dashboard updateObjectsForRelationship:@"workflows"
+                                                       withJSONObject:JSONArray
+                                                              fromURL:nil
+                                               deleteEveryOtherObject:YES
+                                                                error:&error];
+    STAssertNil(error, @"error while updating workflows %@", error);
+    
+    STAssertEquals(updatedObjects.count, 2u, @"two objects should be updated");
+    TTWorkflow *managedWorkflow1 = [updatedObjects objectAtIndex:0];
+    TTWorkflowSubsclass *managedWorkflow2 = [updatedObjects objectAtIndex:1];
+    
+    STAssertEqualObjects(managedWorkflow1.class, TTWorkflow.class, @"managedWorkflow1 has wrong class");
+    STAssertEqualObjects(managedWorkflow1.name, @"workflow1", @"name wrong");
+    STAssertEqualObjects(managedWorkflow1.type, @"plain", @"type wrong");
+    STAssertEqualObjects(managedWorkflow1.identifier, [NSNumber numberWithInt:1], @"id wrong");
+    
+    STAssertEqualObjects(managedWorkflow2.class, TTWorkflowSubsclass.class, @"managedWorkflow2 has wrong class");
+    STAssertEqualObjects(managedWorkflow2.name, @"workflow2", @"name wrong");
+    STAssertEqualObjects(managedWorkflow2.type, @"subclass", @"type wrong");
+    STAssertEqualObjects(managedWorkflow2.identifier, [NSNumber numberWithInt:2], @"id wrong");
+    STAssertEqualObjects(managedWorkflow2.subclassAttribute, @"some value", @"subclassAttribute wrong");
+    
+    updatedObjects = [newDashboard objectsFromRelationship:@"workflows" sortedByAttribute:@"identifier"];
+    STAssertEquals(updatedObjects.count, 2u, @"two objects should be updated");
+    managedWorkflow1 = [updatedObjects objectAtIndex:0];
+    managedWorkflow2 = [updatedObjects objectAtIndex:1];
+    
+    STAssertEqualObjects(managedWorkflow1.class, TTWorkflow.class, @"managedWorkflow1 has wrong class");
+    STAssertEqualObjects(managedWorkflow1.name, @"workflow1", @"name wrong");
+    STAssertEqualObjects(managedWorkflow1.type, @"plain", @"type wrong");
+    STAssertEqualObjects(managedWorkflow1.identifier, [NSNumber numberWithInt:1], @"id wrong");
+    
+    STAssertEqualObjects(managedWorkflow2.class, TTWorkflowSubsclass.class, @"managedWorkflow2 has wrong class");
+    STAssertEqualObjects(managedWorkflow2.name, @"workflow2", @"name wrong");
+    STAssertEqualObjects(managedWorkflow2.type, @"subclass", @"type wrong");
+    STAssertEqualObjects(managedWorkflow2.identifier, [NSNumber numberWithInt:2], @"id wrong");
+    STAssertEqualObjects(managedWorkflow2.subclassAttribute, @"some value", @"subclassAttribute wrong");
+
+}
+
 #pragma mark - CoreData
 
 - (NSString *)managedObjectModelName

@@ -103,6 +103,11 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
          forJSONObjectKeyPath:(NSString *)JSONObjectKeyPath;
 
 /**
+ Registers a custom subclass for a value of an attribute.
+ */
++ (void)registerSubclass:(Class)subclass forManagedObjectAttributeName:(NSString *)managedObjectAttributeName withValue:(id)value;
+
+/**
  Registers a custom value transformer handler for a managed object attribute name.
  */
 + (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
@@ -138,5 +143,15 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  Deletes a set of objects with given remote IDs.
  */
 + (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs;
+
+/**
+ Updates objects of relationship with objects from a JSON object.
+ @return The updated objects.
+ */
+- (NSArray *)updateObjectsForRelationship:(NSString *)relationship
+                           withJSONObject:(id)JSONObject
+                                  fromURL:(NSURL *)URL
+                   deleteEveryOtherObject:(BOOL)deleteEveryOtherObject
+                                    error:(NSError *__autoreleasing *)error;
 
 @end

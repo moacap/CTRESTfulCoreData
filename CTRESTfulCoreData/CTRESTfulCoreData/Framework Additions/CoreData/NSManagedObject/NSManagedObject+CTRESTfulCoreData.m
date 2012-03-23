@@ -108,8 +108,6 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     [self.class.backgroundQueue getRequestToURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
                               completionHandler:^(id JSONObject, NSError *error)
      {
-         NSMutableArray *updatedObjects = [NSMutableArray array];
-         
          if (error) {
              // check for error
              completionHandler(nil, error);
@@ -117,75 +115,14 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
          } else {
              // success for now
              
-             // get relationship description, name of destination entity and the name of the invers relation.
-             NSRelationshipDescription *relationshipDescription = [self.class relationshipDescriptionNamed:relationship];
-             NSAssert(relationshipDescription != nil, @"There is no relationship %@ for %@", relationship, self.class);
-             
-             NSString *destinationClassName = relationshipDescription.destinationEntity.managedObjectClassName;
-             NSAssert(destinationClassName != nil, @"no managedObjectClassName specified for destinationEntity %@", relationshipDescription.destinationEntity);
-             NSString *inverseRelationshipName = relationshipDescription.inverseRelationship.name;
-             NSAssert(inverseRelationshipName != nil, @"no inverseRelationshipName specified for relationshipDescription %@", relationshipDescription);
-             
-             // update attributes based in relationship type
-             if (relationshipDescription.isToMany) {
-                 // is a 1-to-many relation
-                 if (![JSONObject isKindOfClass:NSArray.class]) {
-                     // make sure JSONObject has correct class
-                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
-                     return;
-                 }
-                 NSArray *JSONObjectsArray = JSONObject;
-                 
-                 // enumerate raw JSON objects and update destination entity with these.
-                 for (NSDictionary *rawDictionary in JSONObjectsArray) {
-                     if (![rawDictionary isKindOfClass:NSDictionary.class]) {
-                         // make sure JSONObject has correct class
-                         completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
-                         return;
-                     }
-                     
-                     id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary];
-                     [object setValue:self forKey:inverseRelationshipName];
-                     
-                     if (object) {
-                         [updatedObjects addObject:object];
-                     } else {
-                         completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
-                         return;
-                     }
-                 }
-             } else {
-                 if (![JSONObject isKindOfClass:NSDictionary.class]) {
-                     // make sure JSONObject has correct class
-                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
-                     return;
-                 }
-                 
-                 // update destination entity with JSON object.
-                 id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject];
-                 [self setValue:object forKey:relationship];
-                 
-                 if (object) {
-                     [updatedObjects addObject:object];
-                 } else {
-                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
-                     return;
-                 }
-             }
+             NSError *error = nil;
+             NSArray *updatedObjects = [self updateObjectsForRelationship:relationship
+                                                           withJSONObject:JSONObject
+                                                                  fromURL:URL
+                                                   deleteEveryOtherObject:deleteEveryOtherObject
+                                                                    error:&error];
+             completionHandler(updatedObjects, error);
          }
-         
-         if (deleteEveryOtherObject) {
-             NSMutableSet *deletionSet = [[self valueForKey:relationship] mutableCopy];
-             for (id object in updatedObjects) {
-                 [deletionSet removeObject:object];
-             }
-             
-             for (id object in deletionSet) {
-                 [self.managedObjectContext deleteObject:object];
-             }
-         }
-         
-         completionHandler(updatedObjects, nil);
      }];
 }
 
@@ -294,6 +231,13 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     [mappingModel registerAttribute:attributeName forJSONObjectKeyPath:JSONObjectKeyPath];
 }
 
++ (void)registerSubclass:(Class)subclass forManagedObjectAttributeName:(NSString *)managedObjectAttributeName withValue:(id)value
+{
+    CTManagedObjectMappingModel *mappingModel = self.mappingModel;
+    
+    [mappingModel registerSubclass:subclass forManagedObjectAttributeName:managedObjectAttributeName withValue:value];
+}
+
 + (void)registerValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)valueTransformerHandler
           forManagedObjectAttributeName:(NSString *)managedObjectAttributeName
 {
@@ -324,7 +268,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         return nil;
     }
     
-    NSString *modelClassName = NSStringFromClass(self);
+    Class modelClass = [mappingModel subclassForRawJSONDictionary:rawDictionary];
+    if (!modelClass) {
+        modelClass = self;
+    }
+    NSString *modelClassName = NSStringFromClass(modelClass);
     NSString *idKey = [mappingModel keyForManagedObjectFromJSONObjectKeyPath:@"id"];
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:modelClassName];
@@ -432,6 +380,84 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     for (id object in objectsToBeDeleted) {
         [context deleteObject:object];
     }
+}
+
+- (NSArray *)updateObjectsForRelationship:(NSString *)relationship
+                           withJSONObject:(id)JSONObject
+                                  fromURL:(NSURL *)URL
+                   deleteEveryOtherObject:(BOOL)deleteEveryOtherObject
+                                    error:(NSError *__autoreleasing *)error
+{
+    NSMutableArray *updatedObjects = [NSMutableArray array];
+    
+    // get relationship description, name of destination entity and the name of the invers relation.
+    NSRelationshipDescription *relationshipDescription = [self.class relationshipDescriptionNamed:relationship];
+    NSAssert(relationshipDescription != nil, @"There is no relationship %@ for %@", relationship, self.class);
+    
+    NSString *destinationClassName = relationshipDescription.destinationEntity.managedObjectClassName;
+    NSAssert(destinationClassName != nil, @"no managedObjectClassName specified for destinationEntity %@", relationshipDescription.destinationEntity);
+    NSString *inverseRelationshipName = relationshipDescription.inverseRelationship.name;
+    NSAssert(inverseRelationshipName != nil, @"no inverseRelationshipName specified for relationshipDescription %@", relationshipDescription);
+    
+    // update attributes based in relationship type
+    if (relationshipDescription.isToMany) {
+        // is a 1-to-many relation
+        if (![JSONObject isKindOfClass:NSArray.class]) {
+            // make sure JSONObject has correct class
+            *error = [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL];
+            return nil;
+        }
+        NSArray *JSONObjectsArray = JSONObject;
+        
+        // enumerate raw JSON objects and update destination entity with these.
+        for (NSDictionary *rawDictionary in JSONObjectsArray) {
+            if (![rawDictionary isKindOfClass:NSDictionary.class]) {
+                // make sure JSONObject has correct class
+                *error = [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL];
+                return nil;
+            }
+            
+            id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary];
+            [object setValue:self forKey:inverseRelationshipName];
+            
+            if (object) {
+                [updatedObjects addObject:object];
+            } else {
+                *error = [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL];
+                return nil;
+            }
+        }
+    } else {
+        if (![JSONObject isKindOfClass:NSDictionary.class]) {
+            // make sure JSONObject has correct class
+            *error = [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL];
+            return nil;
+        }
+        
+        // update destination entity with JSON object.
+        id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject];
+        [self setValue:object forKey:relationship];
+        
+        if (object) {
+            [updatedObjects addObject:object];
+        } else {
+            *error = [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL];
+            return nil;
+        }
+    }
+    
+    if (deleteEveryOtherObject) {
+        NSMutableSet *deletionSet = [[self valueForKey:relationship] mutableCopy];
+        for (id object in updatedObjects) {
+            [deletionSet removeObject:object];
+        }
+        
+        for (id object in deletionSet) {
+            [self.managedObjectContext deleteObject:object];
+        }
+    }
+    
+    return updatedObjects;
 }
 
 @end

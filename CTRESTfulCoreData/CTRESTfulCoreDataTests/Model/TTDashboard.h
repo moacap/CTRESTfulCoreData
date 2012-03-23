@@ -15,6 +15,8 @@
 
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSSet *workflows;
+@property (nonatomic, strong) NSNumber *identifier;
+
 @end
 
 @interface TTDashboard (CoreDataGeneratedAccessors)

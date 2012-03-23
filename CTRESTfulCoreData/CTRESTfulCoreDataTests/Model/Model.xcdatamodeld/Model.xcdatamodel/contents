@@ -8,6 +8,7 @@
         <attribute name="someString" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="TTDashboard" representedClassName="TTDashboard" syncable="YES">
+        <attribute name="identifier" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="workflows" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TTWorkflow" inverseName="dashboard" inverseEntity="TTWorkflow" syncable="YES"/>
     </entity>
@@ -19,7 +20,9 @@
         <attribute name="someString" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="TTWorkflow" representedClassName="TTWorkflow" syncable="YES">
+        <attribute name="identifier" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="dashboard" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TTDashboard" inverseName="workflows" inverseEntity="TTDashboard" syncable="YES"/>
     </entity>
     <entity name="TTWorkflowSubsclass" representedClassName="TTWorkflowSubsclass" parentEntity="TTWorkflow" syncable="YES">
@@ -28,8 +31,8 @@
     <elements>
         <element name="Entity2" positionX="160" positionY="192" width="128" height="120"/>
         <element name="TTEntity1" positionX="160" positionY="192" width="128" height="120"/>
-        <element name="TTDashboard" positionX="160" positionY="192" width="128" height="75"/>
-        <element name="TTWorkflow" positionX="160" positionY="192" width="128" height="75"/>
+        <element name="TTDashboard" positionX="160" positionY="192" width="128" height="90"/>
+        <element name="TTWorkflow" positionX="160" positionY="192" width="128" height="105"/>
         <element name="TTWorkflowSubsclass" positionX="160" positionY="192" width="128" height="60"/>
     </elements>
 </model>

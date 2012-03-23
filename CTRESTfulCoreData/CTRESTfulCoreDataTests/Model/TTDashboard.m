@@ -14,11 +14,11 @@
 
 
 @implementation TTDashboard
-@dynamic name, workflows;
+@dynamic name, workflows, identifier;
 
 + (void)initialize
 {
-    
+    [self registerAttributeName:@"identifier" forJSONObjectKeyPath:@"id"];
 }
 
 + (NSManagedObjectContext *)managedObjectContext

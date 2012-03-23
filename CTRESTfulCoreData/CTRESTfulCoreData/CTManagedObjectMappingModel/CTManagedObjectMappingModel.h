@@ -21,6 +21,8 @@
     
     NSMutableDictionary *_valueTransformerHandlers;
     NSMutableDictionary *_inverseValueTransformerHandlers;
+    
+    NSMutableDictionary *_registeredSubclassesDictionary;
 }
 
 - (void)registerAttribute:(NSString *)attribute
@@ -31,6 +33,10 @@
 
 - (void)registerInverseValueTransformerHandler:(CTCustomTransformableValueTransformationHandler)inservseValueTransformerHandler
                  forManagedObjectAttributeName:(NSString *)managedObjectAttributeName;
+
+- (void)registerSubclass:(Class)subclass forManagedObjectAttributeName:(NSString *)managedObjectAttributeName withValue:(id)value;
+
+- (Class)subclassForRawJSONDictionary:(NSDictionary *)JSONDictionary;
 
 - (void)mergeWithMappingModel:(CTManagedObjectMappingModel *)otherMappingModel;
 
