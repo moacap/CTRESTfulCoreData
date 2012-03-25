@@ -140,9 +140,14 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 + (id)objectWithRemoteID:(NSNumber *)ID;
 
 /**
- @return Sorted array of a given relationship by a given attribute.
+ @return [self objectsFromRelationship:relationship sortedByAttribute:attribute ascending:YES].
  */
 - (NSArray *)objectsFromRelationship:(NSString *)relationship sortedByAttribute:(NSString *)attribute;
+
+/**
+ @return Sorted array of a given relationship by a given attribute ascending.
+ */
+- (NSArray *)objectsFromRelationship:(NSString *)relationship sortedByAttribute:(NSString *)attribute ascending:(BOOL)ascending;
 
 /**
  Deletes a set of objects with given remote IDs.

@@ -365,6 +365,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 - (NSArray *)objectsFromRelationship:(NSString *)relationship sortedByAttribute:(NSString *)attribute
 {
+    return [self objectsFromRelationship:relationship sortedByAttribute:attribute ascending:YES];
+}
+
+- (NSArray *)objectsFromRelationship:(NSString *)relationship sortedByAttribute:(NSString *)attribute ascending:(BOOL)ascending
+{
     NSRelationshipDescription *relationshipDescription = [self.class relationshipDescriptionNamed:relationship];
     NSAssert(relationshipDescription != nil, @"no relationship with name %@ found", relationship);
     
@@ -373,7 +378,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:relationshipDescription.destinationEntity.managedObjectClassName];
     request.predicate = [NSPredicate predicateWithFormat:@"%K == %@", inverseRelationshipDescription.name, self];
-    request.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:attribute ascending:NO]];
+    request.sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:attribute ascending:ascending]];
     
     NSError *error = nil;
     NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
