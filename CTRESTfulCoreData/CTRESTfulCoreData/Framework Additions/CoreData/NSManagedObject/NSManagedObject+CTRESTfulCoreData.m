@@ -394,7 +394,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     NSString *idKey = [mappingModel keyForManagedObjectFromJSONObjectKeyPath:@"id"];
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass(self)];
-    request.predicate = [NSPredicate predicateWithFormat:@"%K NOT IN %@", idKey, remoteIDs];
+    request.predicate = [NSPredicate predicateWithFormat:@"NOT (%K IN %@)", idKey, remoteIDs];
     
     NSError *error = nil;
     NSArray *objectsToBeDeleted = [context executeFetchRequest:request error:&error];
