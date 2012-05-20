@@ -55,6 +55,8 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
              deleteEveryOtherObject:(BOOL)deleteEveryOtherObject
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler;
 
+- (void)postToURL:(NSURL *)URL completionHandler:(void (^)(id JSONObject, NSError *error))completionHandler;
+
 @end
 
 
@@ -108,6 +110,11 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 + (void)unregisterAttributeName:(NSString *)attributeName;
 
 /**
+ POSTing objects will will be done by this prefix. If JSONObjectPrefix would be `registration` and the rawJSONObject would be { id: 5 } then CTRESTfulCoreData would POST { 'registration' : {id: 5} }, if JSONObjectPrefix is nil, CTRESTfulCoreData would simply POST rawJSONObject.
+ */
++ (NSString *)JSONObjectPrefix;
+
+/**
  Registers a custom subclass for a value of an attribute.
  */
 + (void)registerSubclass:(Class)subclass forManagedObjectAttributeName:(NSString *)managedObjectAttributeName withValue:(id)value;
@@ -133,6 +140,11 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
  Updates the actual instance with the given JSON dictionary;
  */
 - (void)updateWithRawJSONDictionary:(NSDictionary *)dictionary;
+
+/**
+ converts self into a JSON object.
+ */
+@property (nonatomic, readonly) NSDictionary *rawJSONDictionary;
 
 /**
  @return Fetches an object of this class from database with a given it of a remote object.

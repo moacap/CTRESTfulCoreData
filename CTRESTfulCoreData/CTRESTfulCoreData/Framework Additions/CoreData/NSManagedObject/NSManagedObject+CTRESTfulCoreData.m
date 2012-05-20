@@ -126,6 +126,20 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
      }];
 }
 
+- (void)postToURL:(NSURL *)URL completionHandler:(void (^)(id JSONObject, NSError *error))completionHandler
+{
+    NSString *JSONObjectPrefix = [self.class JSONObjectPrefix];
+    NSDictionary *rawJSONDictionary = self.rawJSONDictionary;
+    
+    if (JSONObjectPrefix) {
+        rawJSONDictionary = [NSDictionary dictionaryWithObject:rawJSONDictionary forKey:JSONObjectPrefix];
+    }
+    
+    [self.class.backgroundQueue postJSONObject:rawJSONDictionary
+                                         toURL:URL
+                             completionHandler:completionHandler];
+}
+
 @end
 
 
@@ -249,6 +263,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     [mappingModel unregisterAttributeName:attributeName];
 }
 
++ (NSString *)JSONObjectPrefix
+{
+    return nil;
+}
+
 + (void)registerSubclass:(Class)subclass forManagedObjectAttributeName:(NSString *)managedObjectAttributeName withValue:(id)value
 {
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
@@ -341,6 +360,28 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
             [self setValue:myValue forKey:attributeName];
         }
     }
+}
+
+- (NSDictionary *)rawJSONDictionary
+{
+    CTManagedObjectMappingModel *mappingModel = self.class.mappingModel;
+    CTManagedObjectValidationModel *validationModel = [self.class validationModelForManagedObjectContext:self.managedObjectContext];
+    
+    NSMutableDictionary *rawJSONDictionary = [NSMutableDictionary dictionary];
+    
+    [self.class.attributeNames enumerateObjectsUsingBlock:^(NSString *attributeName, NSUInteger idx, BOOL *stop) {
+        id value = [self valueForKey:attributeName];
+        
+        if (value) {
+            NSString *JSONObjectKey = [mappingModel keyForJSONObjectFromManagedObjectAttribute:attributeName];
+            id JSONObjectValue = [validationModel JSONObjectObjectFromManagedObjectObject:value
+                                                                forManagedObjectAttribute:attributeName];
+            
+            [rawJSONDictionary setObject:JSONObjectValue forKey:JSONObjectKey];
+        }
+    }];
+    
+    return rawJSONDictionary;
 }
 
 + (id)objectWithRemoteID:(NSNumber *)ID

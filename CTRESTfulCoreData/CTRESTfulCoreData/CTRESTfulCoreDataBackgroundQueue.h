@@ -18,4 +18,8 @@
 - (void)getRequestToURL:(NSURL *)URL
       completionHandler:(void(^)(id JSONObject, NSError *error))completionHandler;
 
+- (void)postJSONObject:(id)JSONObject
+             toURL:(NSURL *)URL
+ completionHandler:(void(^)(id JSONObject, NSError *error))completionHandler;
+
 @end
