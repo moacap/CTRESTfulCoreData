@@ -136,8 +136,36 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     }
     
     [self.class.backgroundQueue postJSONObject:rawJSONDictionary
-                                         toURL:URL
-                             completionHandler:completionHandler];
+                                         toURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
+                             completionHandler:^(id JSONObject, NSError *error) {
+                                 if (error) {
+                                     completionHandler(self, error);
+                                 } else {
+                                     [self updateWithRawJSONDictionary:rawJSONDictionary];
+                                     completionHandler(self, nil);
+                                 }
+                             }];
+}
+
+- (void)putToURL:(NSURL *)URL completionHandler:(void (^)(id JSONObject, NSError *error))completionHandler
+{
+    NSString *JSONObjectPrefix = [self.class JSONObjectPrefix];
+    NSDictionary *rawJSONDictionary = self.rawJSONDictionary;
+    
+    if (JSONObjectPrefix) {
+        rawJSONDictionary = [NSDictionary dictionaryWithObject:rawJSONDictionary forKey:JSONObjectPrefix];
+    }
+    
+    [self.class.backgroundQueue putJSONObject:rawJSONDictionary
+                                        toURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
+                            completionHandler:^(id JSONObject, NSError *error) {
+                                if (error) {
+                                    completionHandler(self, error);
+                                } else {
+                                    [self updateWithRawJSONDictionary:rawJSONDictionary];
+                                    completionHandler(self, nil);
+                                }
+                            }];
 }
 
 @end

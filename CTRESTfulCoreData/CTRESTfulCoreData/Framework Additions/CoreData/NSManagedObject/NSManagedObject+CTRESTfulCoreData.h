@@ -57,6 +57,8 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 
 - (void)postToURL:(NSURL *)URL completionHandler:(void (^)(id JSONObject, NSError *error))completionHandler;
 
+- (void)putToURL:(NSURL *)URL completionHandler:(void (^)(id JSONObject, NSError *error))completionHandler;
+
 @end
 
 

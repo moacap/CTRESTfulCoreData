@@ -19,7 +19,11 @@
       completionHandler:(void(^)(id JSONObject, NSError *error))completionHandler;
 
 - (void)postJSONObject:(id)JSONObject
-             toURL:(NSURL *)URL
- completionHandler:(void(^)(id JSONObject, NSError *error))completionHandler;
+                 toURL:(NSURL *)URL
+     completionHandler:(void(^)(id JSONObject, NSError *error))completionHandler;
+
+- (void)putJSONObject:(id)JSONObject
+                toURL:(NSURL *)URL
+    completionHandler:(void(^)(id JSONObject, NSError *error))completionHandler;
 
 @end
