@@ -390,7 +390,7 @@
 		A785388414FB778600D29EB0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = ebf;
 			};
 			buildConfigurationList = A785388714FB778600D29EB0 /* Build configuration list for PBXProject "CTRESTfulCoreData" */;
@@ -555,6 +555,7 @@
 				DSTROOT = /tmp/CTRESTfulCoreData.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CTRESTfulCoreData/CTRESTfulCoreData-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -571,6 +572,7 @@
 				DSTROOT = /tmp/CTRESTfulCoreData.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CTRESTfulCoreData/CTRESTfulCoreData-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
