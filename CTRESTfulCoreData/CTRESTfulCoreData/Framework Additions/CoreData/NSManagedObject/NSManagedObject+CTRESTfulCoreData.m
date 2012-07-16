@@ -141,7 +141,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                                  if (error) {
                                      completionHandler(self, error);
                                  } else {
-                                     [self updateWithRawJSONDictionary:rawJSONDictionary];
+                                     [self updateWithRawJSONDictionary:JSONObject];
                                      completionHandler(self, nil);
                                  }
                              }];
@@ -162,7 +162,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                                 if (error) {
                                     completionHandler(self, error);
                                 } else {
-                                    [self updateWithRawJSONDictionary:rawJSONDictionary];
+                                    [self updateWithRawJSONDictionary:JSONObject];
                                     completionHandler(self, nil);
                                 }
                             }];
