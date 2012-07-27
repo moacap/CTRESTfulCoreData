@@ -168,6 +168,22 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                             }];
 }
 
+- (void)deleteToURL:(NSURL *)URL completionHandler:(void (^)(NSError *error))completionHandler
+{
+    [self.class.backgroundQueue deleteRequestToURL:[URL URLBySubstitutingAttributesWithManagedObject:self] completionHandler:^(NSError *error) {
+        if (error) {
+            if (completionHandler) {
+                completionHandler(error);
+            }
+        } else {
+            [self.class.managedObjectContext deleteObject:self];
+            if (completionHandler) {
+                completionHandler(nil);
+            }
+        }
+    }];
+}
+
 @end
 
 
