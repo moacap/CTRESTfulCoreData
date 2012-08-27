@@ -70,7 +70,7 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
         return [self _convertObject:JSONObjectObject forManagedObjectAttribute:managedObjectAttributeName];
     }
     
-    DLog(@"WARNING: Invalid object (%@) for managedObjectAttributeName (%@)", JSONObjectObject, managedObjectAttributeName);
+    DLog(@"API return invalid object %@ for managedObjectAttributeName %@ of class %@", JSONObjectObject, managedObjectAttributeName, _managedObjectClassName);
     return nil;
 }
 
