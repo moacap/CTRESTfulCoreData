@@ -22,7 +22,12 @@
     [self registerAttributeName:@"blabla" forJSONObjectKeyPath:@"blabla2"];
 }
 
-+ (NSManagedObjectContext *)managedObjectContext
++ (NSManagedObjectContext *)mainThreadManagedObjectContext
+{
+    return testContext;
+}
+
++ (NSManagedObjectContext *)backgroundThreadManagedObjectContext
 {
     return testContext;
 }

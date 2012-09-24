@@ -46,15 +46,17 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
              [backgroundContext performBlock:^{
                  
                  void(^successBlock)(NSArray *objectIDs) = ^(NSArray *objectIDs) {
-                     NSManagedObjectContext *mainThreadContext = [self mainThreadManagedObjectContext];
-                     
-                     [mainThreadContext performBlock:^{
-                         NSArray *finalObjectArray = [objectIDs CTArrayByCollectionObjectsWithCollector:^id(NSManagedObjectID *objectID, NSUInteger index, BOOL *stop) {
-                             return [mainThreadContext objectWithID:objectID];
-                         }];
+                     dispatch_async(dispatch_get_main_queue(), ^(void) {
+                         NSManagedObjectContext *mainThreadContext = [self mainThreadManagedObjectContext];
                          
-                         completionHandlerZZZ(finalObjectArray, nil);
-                     }];
+                         [mainThreadContext performBlock:^{
+                             NSArray *finalObjectArray = [objectIDs CTArrayByCollectionObjectsWithCollector:^id(NSManagedObjectID *objectID, NSUInteger index, BOOL *stop) {
+                                 return [mainThreadContext objectWithID:objectID];
+                             }];
+                             
+                             completionHandlerZZZ(finalObjectArray, nil);
+                         }];
+                     });
                  };
                  
                  void(^failureBlock)(NSError *error) = ^(NSError *error) {
@@ -145,14 +147,29 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
              return;
          } else {
              // success for now
+             NSManagedObjectID *objectID = self.objectID;
+             NSManagedObjectContext *backgroundContext = [self.class backgroundThreadManagedObjectContext];
              
-             NSError *error = nil;
-             NSArray *updatedObjects = [self updateObjectsForRelationship:relationship
-                                                           withJSONObject:JSONObject
-                                                                  fromURL:URL
-                                                   deleteEveryOtherObject:deleteEveryOtherObject
-                                                                    error:&error];
-             completionHandler(updatedObjects, error);
+             [backgroundContext performBlock:^{
+                 NSManagedObject *backgroundSelf = [backgroundContext objectWithID:objectID];
+                 NSError *error = nil;
+                 
+                 NSArray *updatedObjects = [backgroundSelf updateObjectsForRelationship:relationship
+                                                                         withJSONObject:JSONObject
+                                                                                fromURL:URL
+                                                                 deleteEveryOtherObject:deleteEveryOtherObject
+                                                                                  error:&error];
+                 
+                 NSArray *objectIDs = CTRESTfulCoreDataManagedObjectIDCollector(updatedObjects);
+                 
+                 dispatch_async(dispatch_get_main_queue(), ^(void) {
+                     NSManagedObjectContext *mainThreadContext = [self.class mainThreadManagedObjectContext];
+                     [mainThreadContext performBlock:^{
+                         NSArray *objects = CTRESTfulCoreDataManagedObjectCollector(objectIDs, mainThreadContext);
+                         completionHandler(objects, error);
+                     }];
+                 });
+             }];
          }
      }];
 }
@@ -524,6 +541,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     NSAssert(destinationClassName != nil, @"no managedObjectClassName specified for destinationEntity %@", relationshipDescription.destinationEntity);
     NSString *inverseRelationshipName = relationshipDescription.inverseRelationship.name;
     NSAssert(inverseRelationshipName != nil, @"no inverseRelationshipName specified for relationshipDescription %@", relationshipDescription);
+    NSParameterAssert(error);
     
     // update attributes based in relationship type
     if (relationshipDescription.isToMany) {
@@ -561,7 +579,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         }
         
         // update destination entity with JSON object.
-        id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject];
+        id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject inManagedObjectContext:self.managedObjectContext];
         [self setValue:object forKey:relationship];
         
         if (object) {
@@ -581,6 +599,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         for (id object in deletionSet) {
             [self.managedObjectContext deleteObject:object];
         }
+    }
+    
+    NSError *saveError = nil;
+    if (![self.managedObjectContext save:&saveError]) {
+        *error = saveError;
     }
     
     return updatedObjects;
