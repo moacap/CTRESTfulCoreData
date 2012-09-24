@@ -224,10 +224,20 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                 completionHandler(error);
             }
         } else {
-            [self.class.managedObjectContext deleteObject:self];
-            if (completionHandler) {
-                completionHandler(nil);
+            NSManagedObjectContext *mainThreadManagedObjectContext = [self.class mainThreadManagedObjectContext];
+            [mainThreadManagedObjectContext deleteObject:self];
+            
+            NSError *saveError = nil;
+            if (![mainThreadManagedObjectContext save:&saveError]) {
+                if (completionHandler) {
+                    completionHandler(saveError);
+                }
+            } else {
+                if (completionHandler) {
+                    completionHandler(nil);
+                }
             }
+            
         }
     }];
 }
