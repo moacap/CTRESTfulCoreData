@@ -9,3 +9,6 @@
 #import "CTRESTfulCoreData.h"
 
 NSString *CTRESTfulCoreDataDateFormatString = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+NSString *const CTRESTfulCoreDataRemoteOperationDidStartNotification = @"CTRESTfulCoreDataRemoteOperationDidStartNotification";
+NSString *const CTRESTfulCoreDataRemoteOperationDidFinishNotification = @"CTRESTfulCoreDataRemoteOperationDidFinishNotification";

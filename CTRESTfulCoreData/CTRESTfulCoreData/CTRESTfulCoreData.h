@@ -25,6 +25,9 @@
  */
 extern NSString *CTRESTfulCoreDataDateFormatString;
 
+extern NSString *const CTRESTfulCoreDataRemoteOperationDidStartNotification;
+extern NSString *const CTRESTfulCoreDataRemoteOperationDidFinishNotification;
+
 static inline NSArray *CTRESTfulCoreDataManagedObjectIDCollector(NSArray *objects)
 {
     return [objects CTArrayByCollectionObjectsWithCollector:^id(NSManagedObject *object, NSUInteger index, BOOL *stop) {
