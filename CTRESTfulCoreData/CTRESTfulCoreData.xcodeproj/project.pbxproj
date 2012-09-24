@@ -564,10 +564,6 @@
 		A78538B214FB778600D29EB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					armv6,
-				);
 				DSTROOT = /tmp/CTRESTfulCoreData.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CTRESTfulCoreData/CTRESTfulCoreData-Prefix.pch";
@@ -581,10 +577,6 @@
 		A78538B314FB778600D29EB0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					armv6,
-				);
 				DSTROOT = /tmp/CTRESTfulCoreData.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CTRESTfulCoreData/CTRESTfulCoreData-Prefix.pch";
