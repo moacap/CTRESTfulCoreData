@@ -28,7 +28,12 @@ NSManagedObjectContext *testContext;
     [self registerAttributeName:@"someStrangeString" forJSONObjectKeyPath:@"some_super_strange_string"];
 }
 
-+ (NSManagedObjectContext *)managedObjectContext
++ (NSManagedObjectContext *)mainThreadManagedObjectContext
+{
+    return testContext;
+}
+
++ (NSManagedObjectContext *)backgroundThreadManagedObjectContext
 {
     return testContext;
 }

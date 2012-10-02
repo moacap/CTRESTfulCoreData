@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 ebf. All rights reserved.
 //
 
+#import "NSArray+CTRESTfulCoreData.h"
 #import "NSDate+CTRESTfulCoreData.h"
 #import "NSError+CTRESTfulCoreData.h"
 #import "NSObject+CTRESTfulCoreData.h"
@@ -23,3 +24,20 @@
  Format string with which dates will be converted. Default is @"yyyy-MM-dd'T'HH:mm:ss'Z'".
  */
 extern NSString *CTRESTfulCoreDataDateFormatString;
+
+extern NSString *const CTRESTfulCoreDataRemoteOperationDidStartNotification;
+extern NSString *const CTRESTfulCoreDataRemoteOperationDidFinishNotification;
+
+static inline NSArray *CTRESTfulCoreDataManagedObjectIDCollector(NSArray *objects)
+{
+    return [objects CTArrayByCollectionObjectsWithCollector:^id(NSManagedObject *object, NSUInteger index, BOOL *stop) {
+        return object.objectID;
+    }];
+}
+
+static inline NSArray *CTRESTfulCoreDataManagedObjectCollector(NSArray *objectIDs, NSManagedObjectContext *context)
+{
+    return [objectIDs CTArrayByCollectionObjectsWithCollector:^id(NSManagedObjectID *objectID, NSUInteger index, BOOL *stop) {
+        return [context objectWithID:objectID];
+    }];
+}

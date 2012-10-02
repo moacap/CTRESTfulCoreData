@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A70935F51504B98700A5F659 /* CTRESTfulCoreDataGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = A70935F31504B98700A5F659 /* CTRESTfulCoreDataGlobal.h */; };
+		A70AD4D515F65D2000DD98EB /* NSArray+CTRESTfulCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = A70AD4D315F65D2000DD98EB /* NSArray+CTRESTfulCoreData.h */; };
+		A70AD4D615F65D2000DD98EB /* NSArray+CTRESTfulCoreData.m in Sources */ = {isa = PBXBuildFile; fileRef = A70AD4D415F65D2000DD98EB /* NSArray+CTRESTfulCoreData.m */; };
 		A727281114FCCAD0007C4D96 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A727280F14FCCAD0007C4D96 /* Model.xcdatamodeld */; };
 		A727281414FCCADE007C4D96 /* TTEntity1.m in Sources */ = {isa = PBXBuildFile; fileRef = A727281314FCCADE007C4D96 /* TTEntity1.m */; };
 		A727281714FCCAED007C4D96 /* Entity2.m in Sources */ = {isa = PBXBuildFile; fileRef = A727281614FCCAED007C4D96 /* Entity2.m */; };
@@ -58,6 +60,8 @@
 
 /* Begin PBXFileReference section */
 		A70935F31504B98700A5F659 /* CTRESTfulCoreDataGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTRESTfulCoreDataGlobal.h; sourceTree = "<group>"; };
+		A70AD4D315F65D2000DD98EB /* NSArray+CTRESTfulCoreData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+CTRESTfulCoreData.h"; sourceTree = "<group>"; };
+		A70AD4D415F65D2000DD98EB /* NSArray+CTRESTfulCoreData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+CTRESTfulCoreData.m"; sourceTree = "<group>"; };
 		A727281014FCCAD0007C4D96 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		A727281214FCCADE007C4D96 /* TTEntity1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTEntity1.h; sourceTree = "<group>"; };
 		A727281314FCCADE007C4D96 /* TTEntity1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTEntity1.m; sourceTree = "<group>"; };
@@ -129,6 +133,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A70AD4D115F65D1100DD98EB /* NSArray */ = {
+			isa = PBXGroup;
+			children = (
+				A70AD4D315F65D2000DD98EB /* NSArray+CTRESTfulCoreData.h */,
+				A70AD4D415F65D2000DD98EB /* NSArray+CTRESTfulCoreData.m */,
+			);
+			path = NSArray;
+			sourceTree = "<group>";
+		};
 		A727280E14FCCAD0007C4D96 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +302,7 @@
 		A7C578C114FB85C8000391F9 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
+				A70AD4D115F65D1100DD98EB /* NSArray */,
 				A7C578C214FB85C8000391F9 /* NSDate */,
 				A79224CD14FE213D00449314 /* NSError */,
 				A75E5BDD14FCFACA00E1F2E3 /* NSObject */,
@@ -342,6 +356,7 @@
 				A79224CC14FE1E4B00449314 /* CTRESTfulCoreDataBackgroundQueue.h in Headers */,
 				A79224D014FE215300449314 /* NSError+CTRESTfulCoreData.h in Headers */,
 				A70935F51504B98700A5F659 /* CTRESTfulCoreDataGlobal.h in Headers */,
+				A70AD4D515F65D2000DD98EB /* NSArray+CTRESTfulCoreData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,6 +470,7 @@
 				A75E5BE214FCFADD00E1F2E3 /* NSObject+CTRESTfulCoreData.m in Sources */,
 				A79224CA14FCFFDF00449314 /* NSURL+CTRESTfulCoreData.m in Sources */,
 				A79224D114FE215300449314 /* NSError+CTRESTfulCoreData.m in Sources */,
+				A70AD4D615F65D2000DD98EB /* NSArray+CTRESTfulCoreData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -548,10 +564,6 @@
 		A78538B214FB778600D29EB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					armv6,
-				);
 				DSTROOT = /tmp/CTRESTfulCoreData.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CTRESTfulCoreData/CTRESTfulCoreData-Prefix.pch";
@@ -565,10 +577,6 @@
 		A78538B314FB778600D29EB0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					armv6,
-				);
 				DSTROOT = /tmp/CTRESTfulCoreData.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CTRESTfulCoreData/CTRESTfulCoreData-Prefix.pch";

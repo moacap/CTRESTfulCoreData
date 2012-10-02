@@ -28,14 +28,14 @@
                                          NSString *JSONObjectKey = [attributeKey substringFromIndex:1];
                                          
                                          CTManagedObjectMappingModel *mappingModel = [managedObject.class mappingModel];
-                                         CTManagedObjectValidationModel *validationModel = [managedObject.class validationModelForManagedObjectContext:managedObject.managedObjectContext];
+                                         CTManagedObjectValidationModel *validationModel = [managedObject.class validationModel];
                                          
                                          NSString *managedObjectValueKey = [mappingModel keyForManagedObjectFromJSONObjectKeyPath:JSONObjectKey];
                                          id value = [managedObject valueForKey:managedObjectValueKey];
                                          value = [validationModel JSONObjectObjectFromManagedObjectObject:value
                                                                                 forManagedObjectAttribute:managedObjectValueKey];
                                          
-                                         [substitutionDictionary setObject:value ? value : @"" forKey:attributeKey];
+                                         [substitutionDictionary setObject:value ?: @"" forKey:attributeKey];
                                      }];
     
     NSMutableString *finalURLString = string.mutableCopy;

@@ -7,6 +7,7 @@
 //
 
 #import "CTRESTfulCoreData.h"
+#import "CTRESTfulCoreData.h"
 
 BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
 {
@@ -31,14 +32,13 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType)
 #pragma mark - Initialization
 
 - (id)initWithManagedObjectClassName:(NSString *)managedObjectClassName
-              inManagedObjectContext:(NSManagedObjectContext *)context
 {
     if (self = [super init]) {
         // Initialization code
         _managedObjectClassName = managedObjectClassName;
         
         NSEntityDescription *entityDescription = [NSEntityDescription entityForName:_managedObjectClassName
-                                                             inManagedObjectContext:context];
+                                                             inManagedObjectContext:[NSClassFromString(_managedObjectClassName) mainThreadManagedObjectContext]];
         
         NSMutableDictionary *attributTypesValidationDictionary = [NSMutableDictionary dictionaryWithCapacity:entityDescription.attributesByName.count];
         NSMutableDictionary *valueTransformerNamesDictionary = [NSMutableDictionary dictionaryWithCapacity:entityDescription.attributesByName.count];

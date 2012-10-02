@@ -21,7 +21,12 @@
     [self registerAttributeName:@"identifier" forJSONObjectKeyPath:@"id"];
 }
 
-+ (NSManagedObjectContext *)managedObjectContext
++ (NSManagedObjectContext *)mainThreadManagedObjectContext
+{
+    return testContext;
+}
+
++ (NSManagedObjectContext *)backgroundThreadManagedObjectContext
 {
     return testContext;
 }

@@ -75,12 +75,17 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 /**
  Returns a unique instance for each subclass.
  */
-+ (CTManagedObjectValidationModel *)validationModelForManagedObjectContext:(NSManagedObjectContext *)context;
++ (CTManagedObjectValidationModel *)validationModel;
 
 /**
- @warning: You need to overwrite this method and return a threadsafe NSManagedObjectContext here.
+ @warning: You need to overwrite this method and return an NSManagedObjectContext for the main thread here.
  */
-+ (NSManagedObjectContext *)managedObjectContext;
++ (NSManagedObjectContext *)mainThreadManagedObjectContext;
+
+/**
+ @warning: You need to overwrite this method and return an NSManagedObjectContext for a background thread here, which will perform all the heavy lifting.
+ */
++ (NSManagedObjectContext *)backgroundThreadManagedObjectContext;
 
 /**
  @return NSRelationshipDescription whichs name is relationshipName.
@@ -138,7 +143,8 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 /**
  Searches for an existing entity with id given in dictionary and updates attributes or created new one with given attributes.
  */
-+ (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)dictionary;
++ (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)rawDictionary
+                  inManagedObjectContext:(NSManagedObjectContext *)context;
 
 /**
  Updates the actual instance with the given JSON dictionary;
@@ -153,7 +159,7 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 /**
  @return Fetches an object of this class from database with a given it of a remote object.
  */
-+ (id)objectWithRemoteID:(NSNumber *)ID;
++ (id)objectWithRemoteID:(NSNumber *)ID inManagedObjectContext:(NSManagedObjectContext *)context;
 
 /**
  @return [self objectsFromRelationship:relationship sortedByAttribute:attribute ascending:YES].
@@ -168,7 +174,7 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 /**
  Deletes a set of objects with given remote IDs.
  */
-+ (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs;
++ (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs inManagedObjectContext:(NSManagedObjectContext *)context;
 
 /**
  Updates objects of relationship with objects from a JSON object.

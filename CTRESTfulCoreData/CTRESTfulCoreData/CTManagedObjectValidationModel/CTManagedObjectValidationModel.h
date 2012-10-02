@@ -29,8 +29,7 @@ BOOL NSAttributeTypeIsNSNumber(NSAttributeType attributeType);
 @property (nonatomic, copy) CTCustomTransformableValueTransformationHandler valueTransformationHandler;
 @property (nonatomic, copy) CTCustomTransformableValueTransformationHandler inverseValueTransformationHandler;
 
-- (id)initWithManagedObjectClassName:(NSString *)managedObjectClassName
-              inManagedObjectContext:(NSManagedObjectContext *)context;
+- (id)initWithManagedObjectClassName:(NSString *)managedObjectClassName;
 
 - (id)managedObjectObjectFromJSONObjectObject:(id)JSONObjectObject
                     forManagedObjectAttribute:(NSString *)managedObjectAttributeName;

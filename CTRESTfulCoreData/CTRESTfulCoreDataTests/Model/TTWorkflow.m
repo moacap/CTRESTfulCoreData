@@ -27,7 +27,12 @@
     [self registerAttributeName:@"blabla" forJSONObjectKeyPath:@"blabla1"];
 }
 
-+ (NSManagedObjectContext *)managedObjectContext
++ (NSManagedObjectContext *)mainThreadManagedObjectContext
+{
+    return testContext;
+}
+
++ (NSManagedObjectContext *)backgroundThreadManagedObjectContext
 {
     return testContext;
 }

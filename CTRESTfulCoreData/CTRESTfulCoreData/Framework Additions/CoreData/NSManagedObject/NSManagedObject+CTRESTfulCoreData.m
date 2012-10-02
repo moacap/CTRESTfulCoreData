@@ -7,6 +7,7 @@
 //
 
 #import "CTRESTfulCoreData.h"
+#import "NSArray+CTRESTfulCoreData.h"
 
 NSString *const CTRESTfulCoreDataMappingModelKey = @"CTRESTfulCoreDataMappingModelKey";
 NSString *const CTRESTfulCoreDataValidationModelKey = @"CTRESTfulCoreDataValidationModelKey";
@@ -29,6 +30,8 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
           completionHandler:(void (^)(NSArray *, NSError *))completionHandler
 {
     // send request to given URL
+    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidStartNotification object:nil];
+    
     [self.backgroundQueue getRequestToURL:URL
                         completionHandler:^(id JSONObject, NSError *error)
      {
@@ -36,55 +39,100 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
          
          if (error != nil) {
              // check for error
-             completionHandler(nil, error);
+             [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+             
+             if (completionHandler) {
+                 completionHandler(nil, error);
+             }
              return;
          } else {
              // success for now
+             NSManagedObjectContext *backgroundContext = [self backgroundThreadManagedObjectContext];
              
-             if ([JSONObject isKindOfClass:NSArray.class]) {
-                 NSArray *JSONObjectArray = JSONObject;
-                 NSMutableArray *updatedObjects = [NSMutableArray arrayWithCapacity:JSONObjectArray.count];
+             [backgroundContext performBlock:^{
                  
-                 // convert all JSON objects into NSManagedObjects
-                 for (NSDictionary *rawDictionary in JSONObject) {
-                     if (![rawDictionary isKindOfClass:NSDictionary.class]) {
-                         completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
-                         return;
+                 void(^successBlock)(NSArray *objectIDs) = ^(NSArray *objectIDs) {
+                     dispatch_async(dispatch_get_main_queue(), ^(void) {
+                         NSManagedObjectContext *mainThreadContext = [self mainThreadManagedObjectContext];
+                         
+                         [mainThreadContext performBlock:^{
+                             NSArray *finalObjectArray = [objectIDs CTArrayByCollectionObjectsWithCollector:^id(NSManagedObjectID *objectID, NSUInteger index, BOOL *stop) {
+                                 return [mainThreadContext objectWithID:objectID];
+                             }];
+                             
+                             [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                             if (completionHandler) {
+                                 completionHandler(finalObjectArray, nil);
+                             }
+                         }];
+                     });
+                 };
+                 
+                 void(^failureBlock)(NSError *error) = ^(NSError *error) {
+                     dispatch_async(dispatch_get_main_queue(), ^(void) {
+                         [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                         if (completionHandler) {
+                             completionHandler(nil, error);
+                         }
+                     });
+                 };
+                 
+                 NSArray *(^objectIDCollector)(NSArray *objects) = ^(NSArray *objects) {
+                     return [objects CTArrayByCollectionObjectsWithCollector:^id(NSManagedObject *object, NSUInteger index, BOOL *stop) {
+                         return object.objectID;
+                     }];
+                 };
+                 
+                 NSMutableArray *updatedObjects = [NSMutableArray array];
+                 
+                 if ([JSONObject isKindOfClass:NSArray.class]) {
+                     // convert all JSON objects into NSManagedObjects
+                     for (NSDictionary *rawDictionary in JSONObject) {
+                         if (![rawDictionary isKindOfClass:NSDictionary.class]) {
+                             failureBlock([NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+                             return;
+                         }
+                         
+                         id object = [self updatedObjectWithRawJSONDictionary:rawDictionary inManagedObjectContext:backgroundContext];
+                         if (object) {
+                             [updatedObjects addObject:object];
+                         } else {
+                             failureBlock([NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
+                             return;
+                         }
+                         
+                         NSNumber *JSONObjectID = [rawDictionary objectForKey:@"id"];
+                         if (JSONObjectID) {
+                             [fetchedObjectIDs addObject:JSONObjectID];
+                         }
                      }
+                 } else if ([JSONObject isKindOfClass:NSDictionary.class]) {
+                     id object = [self updatedObjectWithRawJSONDictionary:JSONObject inManagedObjectContext:backgroundContext];
                      
-                     id object = [self updatedObjectWithRawJSONDictionary:rawDictionary];
                      if (object) {
                          [updatedObjects addObject:object];
                      } else {
-                         completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
+                         failureBlock([NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
                          return;
                      }
-                     
-                     NSNumber *JSONObjectID = [rawDictionary objectForKey:@"id"];
-                     if (JSONObjectID) {
-                         [fetchedObjectIDs addObject:JSONObjectID];
-                     }
-                 }
-                 
-                 completionHandler(updatedObjects, nil);
-             } else if ([JSONObject isKindOfClass:NSDictionary.class]) {
-                 id object = [self updatedObjectWithRawJSONDictionary:JSONObject];
-                 
-                 if (object) {
-                     completionHandler([NSArray arrayWithObject:object], nil);
                  } else {
-                     completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseJSONObjectDidNotConvertInManagedObject:JSONObject fromURL:URL]);
+                     // object is not supported
+                     failureBlock([NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
+                     return;
                  }
-             } else {
-                 // object is not supported
-                 completionHandler(nil, [NSError CTRESTfulCoreDataErrorBecauseBackgroundQueueReturnedUnexpectedJSONObject:JSONObject fromURL:URL]);
-                 return;
-             }
-         }
-         
-         if (deleteEveryOtherObject) {
-             // now delete every object not returned from the API
-             [self deleteObjectsWithoutRemoteIDs:fetchedObjectIDs];
+                 
+                 if (deleteEveryOtherObject) {
+                     // now delete every object not returned from the API
+                     [self deleteObjectsWithoutRemoteIDs:fetchedObjectIDs inManagedObjectContext:backgroundContext];
+                 }
+                 
+                 NSError *saveError = nil;
+                 if (![backgroundContext save:&saveError]) {
+                     failureBlock(saveError);
+                 } else {
+                     successBlock(objectIDCollector(updatedObjects));
+                 }
+             }];
          }
      }];
 }
@@ -105,23 +153,48 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                   completionHandler:(void (^)(NSArray *fetchedObjects, NSError *error))completionHandler
 {
     // send request to given URL
+    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidStartNotification object:nil];
+    
     [self.class.backgroundQueue getRequestToURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
                               completionHandler:^(id JSONObject, NSError *error)
      {
          if (error) {
              // check for error
-             completionHandler(nil, error);
+             [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+             
+             if (completionHandler) {
+                 completionHandler(nil, error);
+             }
              return;
          } else {
              // success for now
+             NSManagedObjectID *objectID = self.objectID;
+             NSManagedObjectContext *backgroundContext = [self.class backgroundThreadManagedObjectContext];
              
-             NSError *error = nil;
-             NSArray *updatedObjects = [self updateObjectsForRelationship:relationship
-                                                           withJSONObject:JSONObject
-                                                                  fromURL:URL
-                                                   deleteEveryOtherObject:deleteEveryOtherObject
-                                                                    error:&error];
-             completionHandler(updatedObjects, error);
+             [backgroundContext performBlock:^{
+                 NSManagedObject *backgroundSelf = [backgroundContext objectWithID:objectID];
+                 NSError *error = nil;
+                 
+                 NSArray *updatedObjects = [backgroundSelf updateObjectsForRelationship:relationship
+                                                                         withJSONObject:JSONObject
+                                                                                fromURL:URL
+                                                                 deleteEveryOtherObject:deleteEveryOtherObject
+                                                                                  error:&error];
+                 
+                 NSArray *objectIDs = CTRESTfulCoreDataManagedObjectIDCollector(updatedObjects);
+                 
+                 dispatch_async(dispatch_get_main_queue(), ^(void) {
+                     NSManagedObjectContext *mainThreadContext = [self.class mainThreadManagedObjectContext];
+                     [mainThreadContext performBlock:^{
+                         NSArray *objects = CTRESTfulCoreDataManagedObjectCollector(objectIDs, mainThreadContext);
+                         [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                         
+                         if (completionHandler) {
+                             completionHandler(objects, error);
+                         }
+                     }];
+                 });
+             }];
          }
      }];
 }
@@ -135,14 +208,32 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         rawJSONDictionary = [NSDictionary dictionaryWithObject:rawJSONDictionary forKey:JSONObjectPrefix];
     }
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidStartNotification object:nil];
+    
     [self.class.backgroundQueue postJSONObject:rawJSONDictionary
                                          toURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
                              completionHandler:^(id JSONObject, NSError *error) {
                                  if (error) {
-                                     completionHandler(self, error);
+                                     [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                                     
+                                     if (completionHandler) {
+                                         completionHandler(self, error);
+                                     }
                                  } else {
                                      [self updateWithRawJSONDictionary:JSONObject];
-                                     completionHandler(self, nil);
+                                     
+                                     [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                                     
+                                     NSError *saveError = nil;
+                                     if (![self.managedObjectContext save:&saveError]) {
+                                         if (completionHandler) {
+                                             completionHandler(self, saveError);
+                                         }
+                                     } else {
+                                         if (completionHandler) {
+                                             completionHandler(self, nil);
+                                         }
+                                     }
                                  }
                              }];
 }
@@ -156,29 +247,62 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         rawJSONDictionary = [NSDictionary dictionaryWithObject:rawJSONDictionary forKey:JSONObjectPrefix];
     }
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidStartNotification object:nil];
+    
     [self.class.backgroundQueue putJSONObject:rawJSONDictionary
                                         toURL:[URL URLBySubstitutingAttributesWithManagedObject:self]
                             completionHandler:^(id JSONObject, NSError *error) {
                                 if (error) {
-                                    completionHandler(self, error);
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                                    
+                                    if (completionHandler) {
+                                        completionHandler(self, error);
+                                    }
                                 } else {
                                     [self updateWithRawJSONDictionary:JSONObject];
-                                    completionHandler(self, nil);
+                                    
+                                    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                                    
+                                    NSError *saveError = nil;
+                                    if (![self.managedObjectContext save:&saveError]) {
+                                        if (completionHandler) {
+                                            completionHandler(self, saveError);
+                                        }
+                                    } else {
+                                        if (completionHandler) {
+                                            completionHandler(self, nil);
+                                        }
+                                    }
                                 }
                             }];
 }
 
 - (void)deleteToURL:(NSURL *)URL completionHandler:(void (^)(NSError *error))completionHandler
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidStartNotification object:nil];
+    
     [self.class.backgroundQueue deleteRequestToURL:[URL URLBySubstitutingAttributesWithManagedObject:self] completionHandler:^(NSError *error) {
         if (error) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+            
             if (completionHandler) {
                 completionHandler(error);
             }
         } else {
-            [self.class.managedObjectContext deleteObject:self];
-            if (completionHandler) {
-                completionHandler(nil);
+            NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+            [managedObjectContext deleteObject:self];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+            
+            NSError *saveError = nil;
+            if (![managedObjectContext save:&saveError]) {
+                if (completionHandler) {
+                    completionHandler(saveError);
+                }
+            } else {
+                if (completionHandler) {
+                    completionHandler(nil);
+                }
             }
         }
     }];
@@ -192,7 +316,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 + (NSArray *)attributeNames
 {
-    NSManagedObjectContext *context = self.managedObjectContext;
+    NSManagedObjectContext *context = [self mainThreadManagedObjectContext];
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self)
                                                          inManagedObjectContext:context];
     
@@ -212,13 +336,19 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 + (NSRelationshipDescription *)relationshipDescriptionNamed:(NSString *)relationshipName
 {
-    NSManagedObjectContext *context = self.managedObjectContext;
+    NSManagedObjectContext *context = [self mainThreadManagedObjectContext];
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self)
                                                          inManagedObjectContext:context];
     return [entityDescription.relationshipsByName objectForKey:relationshipName];
 }
 
-+ (NSManagedObjectContext *)managedObjectContext
++ (NSManagedObjectContext *)mainThreadManagedObjectContext
+{
+    [NSException raise:NSInternalInconsistencyException format:@"%@ does not recognize selector %@", self, NSStringFromSelector(_cmd)];
+    return nil;
+}
+
++ (NSManagedObjectContext *)backgroundThreadManagedObjectContext
 {
     [NSException raise:NSInternalInconsistencyException format:@"%@ does not recognize selector %@", self, NSStringFromSelector(_cmd)];
     return nil;
@@ -258,12 +388,12 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     return mappingModel;
 }
 
-+ (CTManagedObjectValidationModel *)validationModelForManagedObjectContext:(NSManagedObjectContext *)context
++ (CTManagedObjectValidationModel *)validationModel
 {
     CTManagedObjectValidationModel *validationModel = objc_getAssociatedObject(self, &CTRESTfulCoreDataValidationModelKey);
     
     if (!validationModel) {
-        validationModel = [[CTManagedObjectValidationModel alloc] initWithManagedObjectClassName:NSStringFromClass(self) inManagedObjectContext:context];
+        validationModel = [[CTManagedObjectValidationModel alloc] initWithManagedObjectClassName:NSStringFromClass(self)];
         
         [validationModel setValueTransformationHandler:^id(id object, NSString *managedObjectAttributeName) {
             CTManagedObjectMappingModel *mappingModel = self.mappingModel;
@@ -338,11 +468,10 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 }
 
 + (id)updatedObjectWithRawJSONDictionary:(NSDictionary *)rawDictionary
+                  inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    NSManagedObjectContext *context = self.managedObjectContext;
-    
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
-    CTManagedObjectValidationModel *validationModel = [self validationModelForManagedObjectContext:context];
+    CTManagedObjectValidationModel *validationModel = [self validationModel];
     
     if (![rawDictionary isKindOfClass:NSDictionary.class]) {
         DLog(@"WARNING: JSON Object is not a NSDictionary (%@)", rawDictionary);
@@ -390,7 +519,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 - (void)updateWithRawJSONDictionary:(NSDictionary *)rawDictionary
 {
     NSArray *attributes = [self.class attributeNames];
-    CTManagedObjectValidationModel *validationModel = [self.class validationModelForManagedObjectContext:self.managedObjectContext];
+    CTManagedObjectValidationModel *validationModel = [self.class validationModel];
     CTManagedObjectMappingModel *mappingModel = self.class.mappingModel;
     
     for (NSString *attributeName in attributes) {
@@ -409,7 +538,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 - (NSDictionary *)rawJSONDictionary
 {
     CTManagedObjectMappingModel *mappingModel = self.class.mappingModel;
-    CTManagedObjectValidationModel *validationModel = [self.class validationModelForManagedObjectContext:self.managedObjectContext];
+    CTManagedObjectValidationModel *validationModel = [self.class validationModel];
     
     NSMutableDictionary *rawJSONDictionary = [NSMutableDictionary dictionary];
     
@@ -428,9 +557,8 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     return rawJSONDictionary;
 }
 
-+ (id)objectWithRemoteID:(NSNumber *)ID
++ (id)objectWithRemoteID:(NSNumber *)ID inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    NSManagedObjectContext *context = self.managedObjectContext;
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
     NSString *idKey = [mappingModel keyForManagedObjectFromJSONObjectKeyPath:@"id"];
     
@@ -472,9 +600,8 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     return objects;
 }
 
-+ (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs
++ (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs inManagedObjectContext:(NSManagedObjectContext *)context
 {
-    NSManagedObjectContext *context = self.managedObjectContext;
     CTManagedObjectMappingModel *mappingModel = self.mappingModel;
     NSString *idKey = [mappingModel keyForManagedObjectFromJSONObjectKeyPath:@"id"];
     
@@ -506,6 +633,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     NSAssert(destinationClassName != nil, @"no managedObjectClassName specified for destinationEntity %@", relationshipDescription.destinationEntity);
     NSString *inverseRelationshipName = relationshipDescription.inverseRelationship.name;
     NSAssert(inverseRelationshipName != nil, @"no inverseRelationshipName specified for relationshipDescription %@", relationshipDescription);
+    NSParameterAssert(error);
     
     // update attributes based in relationship type
     if (relationshipDescription.isToMany) {
@@ -525,7 +653,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                 return nil;
             }
             
-            id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary];
+            id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:rawDictionary inManagedObjectContext:self.managedObjectContext];
             [object setValue:self forKey:inverseRelationshipName];
             
             if (object) {
@@ -543,7 +671,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         }
         
         // update destination entity with JSON object.
-        id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject];
+        id object = [NSClassFromString(destinationClassName) updatedObjectWithRawJSONDictionary:JSONObject inManagedObjectContext:self.managedObjectContext];
         [self setValue:object forKey:relationship];
         
         if (object) {
@@ -563,6 +691,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         for (id object in deletionSet) {
             [self.managedObjectContext deleteObject:object];
         }
+    }
+    
+    NSError *saveError = nil;
+    if (![self.managedObjectContext save:&saveError]) {
+        *error = saveError;
     }
     
     return updatedObjects;
