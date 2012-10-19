@@ -550,7 +550,9 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
             id JSONObjectValue = [validationModel JSONObjectObjectFromManagedObjectObject:value
                                                                 forManagedObjectAttribute:attributeName];
             
-            [rawJSONDictionary setObject:JSONObjectValue forKey:JSONObjectKey];
+            if (JSONObjectKey && JSONObjectValue) {
+                [rawJSONDictionary setObject:JSONObjectValue forKey:JSONObjectKey];
+            }
         }
     }];
     
