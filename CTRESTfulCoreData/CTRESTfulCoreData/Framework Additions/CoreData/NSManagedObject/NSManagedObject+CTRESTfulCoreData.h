@@ -177,6 +177,11 @@ extern NSString *const CTRESTfulCoreDataBackgroundQueueNameKey;
 + (void)deleteObjectsWithoutRemoteIDs:(NSArray *)remoteIDs inManagedObjectContext:(NSManagedObjectContext *)context;
 
 /**
+ called by updateObjectsForRelationship:withJSONObject:fromURL:deleteEveryOtherObject:error: to verify that a given object really should be deleted. default implementation returns YES.
+ */
+- (BOOL)shouldDeleteManagedObjectAfterFetch:(NSManagedObject *)object forRelationship:(NSString *)relationship;
+
+/**
  Updates objects of relationship with objects from a JSON object.
  @return The updated objects.
  */

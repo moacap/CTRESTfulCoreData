@@ -619,6 +619,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     }
 }
 
+- (BOOL)shouldDeleteManagedObjectAfterFetch:(NSManagedObject *)object forRelationship:(NSString *)relationship
+{
+    return YES;
+}
+
 - (NSArray *)updateObjectsForRelationship:(NSString *)relationship
                            withJSONObject:(id)JSONObject
                                   fromURL:(NSURL *)URL
@@ -691,7 +696,9 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
         }
         
         for (id object in deletionSet) {
-            [self.managedObjectContext deleteObject:object];
+            if ([self shouldDeleteManagedObjectAfterFetch:object forRelationship:relationship]) {
+                [self.managedObjectContext deleteObject:object];
+            }
         }
     }
     
