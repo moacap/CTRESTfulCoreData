@@ -572,7 +572,7 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
     NSAssert(error == nil, @"error while fetching: %@", error);
     
     if (objects.count > 0) {
-        return [objects objectAtIndex:0];
+        return objects[0];
     }
     
     return nil;
