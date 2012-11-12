@@ -201,6 +201,11 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
 
 - (void)postToURL:(NSURL *)URL completionHandler:(void (^)(id JSONObject, NSError *error))completionHandler
 {
+    if (self.isInserted) {
+        // first save the context to self 
+        [self.managedObjectContext save:NULL];
+    }
+    
     NSString *JSONObjectPrefix = [self.class JSONObjectPrefix];
     NSDictionary *rawJSONDictionary = self.rawJSONDictionary;
     
