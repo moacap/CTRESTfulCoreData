@@ -220,20 +220,24 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                                          completionHandler(self, error);
                                      }
                                  } else {
-                                     [self updateWithRawJSONDictionary:JSONObject];
+                                     NSManagedObjectID *objectID = self.objectID;
                                      
-                                     [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
-                                     
-                                     NSError *saveError = nil;
-                                     if (![self.managedObjectContext save:&saveError]) {
-                                         if (completionHandler) {
-                                             completionHandler(self, saveError);
-                                         }
-                                     } else {
-                                         if (completionHandler) {
-                                             completionHandler(self, nil);
-                                         }
-                                     }
+                                     NSManagedObjectContext *context = [self.class backgroundThreadManagedObjectContext];
+                                     [context performBlock:^{
+                                         NSManagedObject *backgroundSelf = [context objectWithID:objectID];
+                                         [backgroundSelf updateWithRawJSONDictionary:JSONObject];
+                                         
+                                         NSError *saveError = nil;
+                                         [context save:&saveError];
+                                         
+                                         dispatch_async(dispatch_get_main_queue(), ^(void) {
+                                             [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                                             
+                                             if (completionHandler) {
+                                                 completionHandler(self, saveError);
+                                             }
+                                         });
+                                     }];
                                  }
                              }];
 }
@@ -259,20 +263,24 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                                         completionHandler(self, error);
                                     }
                                 } else {
-                                    [self updateWithRawJSONDictionary:JSONObject];
+                                    NSManagedObjectID *objectID = self.objectID;
                                     
-                                    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
-                                    
-                                    NSError *saveError = nil;
-                                    if (![self.managedObjectContext save:&saveError]) {
-                                        if (completionHandler) {
-                                            completionHandler(self, saveError);
-                                        }
-                                    } else {
-                                        if (completionHandler) {
-                                            completionHandler(self, nil);
-                                        }
-                                    }
+                                    NSManagedObjectContext *context = [self.class backgroundThreadManagedObjectContext];
+                                    [context performBlock:^{
+                                        NSManagedObject *backgroundSelf = [context objectWithID:objectID];
+                                        [backgroundSelf updateWithRawJSONDictionary:JSONObject];
+                                        
+                                        NSError *saveError = nil;
+                                        [context save:&saveError];
+                                        
+                                        dispatch_async(dispatch_get_main_queue(), ^(void) {
+                                            [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                                            
+                                            if (completionHandler) {
+                                                completionHandler(self, saveError);
+                                            }
+                                        });
+                                    }];
                                 }
                             }];
 }
@@ -289,21 +297,24 @@ NSString *const CTRESTfulCoreDataBackgroundQueueNameKey = @"CTRESTfulCoreDataBac
                 completionHandler(error);
             }
         } else {
-            NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-            [managedObjectContext deleteObject:self];
+            NSManagedObjectID *myID = self.objectID;
+            NSManagedObjectContext *context = [self.class backgroundThreadManagedObjectContext];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
-            
-            NSError *saveError = nil;
-            if (![managedObjectContext save:&saveError]) {
-                if (completionHandler) {
-                    completionHandler(saveError);
-                }
-            } else {
-                if (completionHandler) {
-                    completionHandler(nil);
-                }
-            }
+            [context performBlock:^{
+                NSManagedObject *backgroundSelf = [context objectWithID:myID];
+                [context deleteObject:backgroundSelf];
+                
+                NSError *saveError = nil;
+                [context save:&saveError];
+                
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:CTRESTfulCoreDataRemoteOperationDidFinishNotification object:nil];
+                    
+                    if (completionHandler) {
+                        completionHandler(saveError);
+                    }
+                });
+            }];
         }
     }];
 }
